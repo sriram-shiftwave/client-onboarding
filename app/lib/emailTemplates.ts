@@ -46,7 +46,7 @@ function getFeaturesList(data: OnboardingFormData): string[] {
 }
 
 const DEFAULT_APP_URL =
-  process.env.NEXT_PUBLIC_APP_URL || "https://client-onboarding-scope.vercel.app";
+  process.env.NEXT_PUBLIC_APP_URL || "https://sriram-shiftwave.github.io/client-onboarding";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. ADMIN NOTIFICATION EMAIL (Received by Designer / Agency)

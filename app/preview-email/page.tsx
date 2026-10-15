@@ -57,7 +57,7 @@ export default function EmailPreviewPage() {
   const currentAppUrl =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
-      : (process.env.NEXT_PUBLIC_APP_URL || "https://client-onboarding-scope.vercel.app");
+      : (process.env.NEXT_PUBLIC_APP_URL || "https://sriram-shiftwave.github.io/client-onboarding");
 
   const clientHtml = generateClientThankYouHtml(SAMPLE_PROJECT, currentAppUrl);
   const clientText = generateClientThankYouPlainText(SAMPLE_PROJECT, currentAppUrl);

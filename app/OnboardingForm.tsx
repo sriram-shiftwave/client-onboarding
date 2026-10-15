@@ -819,7 +819,7 @@ function SuccessScreen({
   const currentUrl =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
-      : (process.env.NEXT_PUBLIC_APP_URL || "https://client-onboarding-scope.vercel.app");
+      : (process.env.NEXT_PUBLIC_APP_URL || "https://sriram-shiftwave.github.io/client-onboarding");
 
   const clientText = generateClientThankYouPlainText(data, currentUrl);
 
@@ -1236,7 +1236,7 @@ Submitted at: ${new Date().toISOString()}
     const currentUrl =
       typeof window !== "undefined" && window.location.origin
         ? window.location.origin
-        : (process.env.NEXT_PUBLIC_APP_URL || "https://client-onboarding-scope.vercel.app");
+        : (process.env.NEXT_PUBLIC_APP_URL || "https://sriram-shiftwave.github.io/client-onboarding");
 
     try {
       const adminHtml = generateAdminEmailHtml(formData, currentUrl);
