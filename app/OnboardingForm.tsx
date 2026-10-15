@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   User,
   Building2,
@@ -17,6 +18,10 @@ import {
   Sun,
   Moon,
   Laptop,
+  Copy,
+  Sparkles,
+  ExternalLink,
+  FileText,
 } from "lucide-react";
 import {
   OnboardingFormData,
@@ -28,6 +33,12 @@ import {
   ASSET_ITEMS,
   TIMELINE_OPTIONS,
 } from "./types";
+import {
+  generateAdminEmailHtml,
+  generateAdminEmailPlainText,
+  generateClientThankYouHtml,
+  generateClientThankYouPlainText,
+} from "./lib/emailTemplates";
 
 function cn(...classes: (string | boolean | undefined | null)[]) {
   return classes.filter(Boolean).join(" ");
@@ -787,6 +798,10 @@ function Section5({ data, onChange, errors }: SectionProps) {
 // Success Screen
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Success Screen
+// ─────────────────────────────────────────────────────────────────────────────
+
 function SuccessScreen({
   data,
   onReset,
@@ -794,77 +809,253 @@ function SuccessScreen({
   data: OnboardingFormData;
   onReset: () => void;
 }) {
+  const [activeTab, setActiveTab] = useState<"roadmap" | "snapshot" | "email">("roadmap");
+  const [copied, setCopied] = useState<boolean>(false);
+
   const selectedCategory = WEBSITE_CATEGORIES.find((c) => c.value === data.websiteCategory);
   const selectedTimeline = TIMELINE_OPTIONS.find((t) => t.value === data.launchTimeline);
+  const firstName = data.fullName.split(" ")[0] || data.fullName;
+
+  const currentUrl =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : (process.env.NEXT_PUBLIC_APP_URL || "https://client-onboarding-scope.vercel.app");
+
+  const clientText = generateClientThankYouPlainText(data, currentUrl);
 
   const getWhatsAppMessage = () => {
+    const categoryName =
+      data.websiteCategory === "other" ? data.websiteCategoryCustom : selectedCategory?.label;
+    const timelineName =
+      data.launchTimeline === "custom" ? data.launchTimelineCustom : selectedTimeline?.label;
     const text = `*New Website Onboarding & Quote Request*
 • Client: ${data.fullName}
 • Company: ${data.companyName}
 • Email: ${data.email}
 • Phone: ${data.phone}
-• Category: ${data.websiteCategory === "other" ? data.websiteCategoryCustom : selectedCategory?.label}
+• Category: ${categoryName}
 • Pages: ${data.estimatedPages === "custom" ? data.estimatedPagesCustom : data.estimatedPages}
-• Timeline: ${data.launchTimeline === "custom" ? data.launchTimelineCustom : selectedTimeline?.label}
+• Timeline: ${timelineName}
 • Business Overview: ${data.businessOverview}`;
     return encodeURIComponent(text);
   };
 
-  return (
-    <div className="max-w-xl mx-auto py-16 px-4 animate-fade-slide">
-      <div className="p-8 sm:p-10 rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-center space-y-6">
-        <div className="w-12 h-12 rounded-full border border-orange-600 dark:border-orange-500 bg-orange-600 dark:bg-orange-500 text-white mx-auto flex items-center justify-center">
-          <Check className="w-6 h-6 stroke-[2.5]" />
-        </div>
+  const handleCopyReceipt = () => {
+    navigator.clipboard.writeText(clientText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2200);
+  };
 
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-            Intake Received
+  return (
+    <div className="max-w-2xl mx-auto py-12 px-4 animate-fade-slide">
+      <div className="p-6 sm:p-10 rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-sm space-y-6">
+        
+        {/* Top Icon & Hero Greeting */}
+        <div className="text-center space-y-3">
+          <div className="w-12 h-12 rounded-full border border-orange-600 bg-orange-600 text-white mx-auto flex items-center justify-center shadow-sm">
+            <Check className="w-6 h-6 stroke-[2.5]" />
+          </div>
+
+          <div className="inline-block px-3 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-900/60 text-orange-700 dark:text-orange-400 text-xs font-semibold uppercase tracking-wider">
+            ✦ Intake Safely Received
+          </div>
+
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
+            Thank you, {firstName}.
           </h2>
-          <p className="text-sm text-stone-500 dark:text-stone-400 max-w-md mx-auto leading-relaxed">
-            Thank you, <span className="font-medium text-stone-900 dark:text-stone-100">{data.fullName}</span>. We have received the project specifications for <span className="font-medium text-stone-900 dark:text-stone-100">{data.companyName}</span> and will prepare your tailored quote within 24–48 hours.
+          <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 max-w-lg mx-auto leading-relaxed">
+            Your project onboarding for <strong className="font-semibold text-stone-900 dark:text-stone-100">{data.companyName}</strong> has been transmitted directly to our studio inbox. A customized proposal and itemized quote will be prepared for you.
           </p>
         </div>
 
-        <div className="p-4 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/60 text-left text-xs space-y-2">
-          <div className="flex justify-between">
-            <span className="text-stone-500">Contact Email:</span>
-            <span className="font-medium text-stone-900 dark:text-stone-100">{data.email}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-stone-500">Scope Type:</span>
-            <span className="font-medium text-stone-900 dark:text-stone-100">
-              {data.websiteCategory === "other" ? data.websiteCategoryCustom : selectedCategory?.label}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-stone-500">Target Timeline:</span>
-            <span className="font-medium text-stone-900 dark:text-stone-100">
-              {data.launchTimeline === "custom" ? data.launchTimelineCustom : selectedTimeline?.label}
-            </span>
-          </div>
+        {/* Tab Switcher */}
+        <div className="flex border-b border-stone-200 dark:border-stone-800">
+          <button
+            type="button"
+            onClick={() => setActiveTab("roadmap")}
+            className={`flex-1 py-2.5 text-xs font-medium border-b-2 transition-all flex items-center justify-center gap-1.5 ${
+              activeTab === "roadmap"
+                ? "border-orange-600 text-orange-600 dark:text-orange-400 font-semibold"
+                : "border-transparent text-stone-500 hover:text-stone-900 dark:hover:text-stone-100"
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Next Steps Roadmap</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("snapshot")}
+            className={`flex-1 py-2.5 text-xs font-medium border-b-2 transition-all flex items-center justify-center gap-1.5 ${
+              activeTab === "snapshot"
+                ? "border-orange-600 text-orange-600 dark:text-orange-400 font-semibold"
+                : "border-transparent text-stone-500 hover:text-stone-900 dark:hover:text-stone-100"
+            }`}
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>Project Snapshot</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("email")}
+            className={`flex-1 py-2.5 text-xs font-medium border-b-2 transition-all flex items-center justify-center gap-1.5 ${
+              activeTab === "email"
+                ? "border-orange-600 text-orange-600 dark:text-orange-400 font-semibold"
+                : "border-transparent text-stone-500 hover:text-stone-900 dark:hover:text-stone-100"
+            }`}
+          >
+            <Mail className="w-3.5 h-3.5" />
+            <span>Thank-You Email</span>
+          </button>
         </div>
 
+        {/* Tab 1: Roadmap */}
+        {activeTab === "roadmap" && (
+          <div className="p-5 rounded-xl bg-stone-50 dark:bg-stone-950/60 border border-stone-200 dark:border-stone-800 space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">
+              What Happens Next?
+            </h3>
+            
+            <div className="space-y-4 text-xs">
+              <div className="flex gap-3 items-start">
+                <div className="w-6 h-6 rounded-full bg-orange-600 text-white flex-shrink-0 flex items-center justify-center text-xs font-bold">
+                  1
+                </div>
+                <div>
+                  <div className="font-semibold text-stone-900 dark:text-stone-100">
+                    Scope & Requirements Analysis (Next 24h)
+                  </div>
+                  <p className="text-stone-500 dark:text-stone-400 mt-0.5 leading-relaxed">
+                    We review your site structure, features, and asset requirements to evaluate technical complexity and timelines.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 items-start">
+                <div className="w-6 h-6 rounded-full bg-orange-600 text-white flex-shrink-0 flex items-center justify-center text-xs font-bold">
+                  2
+                </div>
+                <div>
+                  <div className="font-semibold text-stone-900 dark:text-stone-100">
+                    Tailored Proposal & Fixed Quote (Within 24–48h)
+                  </div>
+                  <p className="text-stone-500 dark:text-stone-400 mt-0.5 leading-relaxed">
+                    You'll receive a detailed proposal breakdown covering exact deliverables, milestones, and development phases.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 items-start">
+                <div className="w-6 h-6 rounded-full bg-orange-600 text-white flex-shrink-0 flex items-center justify-center text-xs font-bold">
+                  3
+                </div>
+                <div>
+                  <div className="font-semibold text-stone-900 dark:text-stone-100">
+                    Optional 20-Minute Kickoff Chat
+                  </div>
+                  <p className="text-stone-500 dark:text-stone-400 mt-0.5 leading-relaxed">
+                    Walk through any revisions, clarify questions, and finalize the 50% start deposit milestone.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 2: Snapshot */}
+        {activeTab === "snapshot" && (
+          <div className="p-4 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/60 text-xs space-y-2.5">
+            <div className="flex justify-between py-1 border-b border-stone-200/60 dark:border-stone-800/60">
+              <span className="text-stone-500">Company:</span>
+              <span className="font-semibold text-stone-900 dark:text-stone-100">{data.companyName}</span>
+            </div>
+            <div className="flex justify-between py-1 border-b border-stone-200/60 dark:border-stone-800/60">
+              <span className="text-stone-500">Contact Email:</span>
+              <span className="font-medium text-stone-900 dark:text-stone-100">{data.email}</span>
+            </div>
+            <div className="flex justify-between py-1 border-b border-stone-200/60 dark:border-stone-800/60">
+              <span className="text-stone-500">Phone / WhatsApp:</span>
+              <span className="font-medium text-stone-900 dark:text-stone-100">{data.phone}</span>
+            </div>
+            <div className="flex justify-between py-1 border-b border-stone-200/60 dark:border-stone-800/60">
+              <span className="text-stone-500">Website Type:</span>
+              <span className="font-semibold text-orange-600 dark:text-orange-400">
+                {data.websiteCategory === "other" ? data.websiteCategoryCustom : selectedCategory?.label}
+              </span>
+            </div>
+            <div className="flex justify-between py-1">
+              <span className="text-stone-500">Estimated Timeline:</span>
+              <span className="font-medium text-stone-900 dark:text-stone-100">
+                {data.launchTimeline === "custom" ? data.launchTimelineCustom : selectedTimeline?.label}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 3: Email Confirmation Copy */}
+        {activeTab === "email" && (
+          <div className="p-4 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/60 text-xs space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200 dark:border-stone-800">
+              <span className="font-medium text-stone-700 dark:text-stone-300">
+                Receipt / Thank-You Confirmation
+              </span>
+              <button
+                type="button"
+                onClick={handleCopyReceipt}
+                className="text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1 font-semibold"
+              >
+                {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                {copied ? "Copied" : "Copy Receipt"}
+              </button>
+            </div>
+            <pre className="text-[11px] font-mono whitespace-pre-wrap text-stone-600 dark:text-stone-400 max-h-48 overflow-y-auto p-2 rounded bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 leading-relaxed">
+              {clientText}
+            </pre>
+          </div>
+        )}
+
+        {/* Action Buttons */}
         <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
           <a
             href={`https://wa.me/?text=${getWhatsAppMessage()}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-stone-200 dark:border-stone-800 text-sm font-medium hover:bg-stone-50 dark:hover:bg-stone-800 text-stone-900 dark:text-stone-100 transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-stone-200 dark:border-stone-800 text-xs font-semibold hover:bg-stone-50 dark:hover:bg-stone-800 text-stone-900 dark:text-stone-100 transition-colors"
           >
             <MessageSquare className="w-4 h-4 text-orange-600 dark:text-orange-500" />
             Send Summary via WhatsApp
           </a>
 
+          <a
+            href={`mailto:${data.email}?subject=${encodeURIComponent(
+              `Project Intake Confirmation - ${data.companyName}`
+            )}&body=${encodeURIComponent(clientText)}`}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-stone-200 dark:border-stone-800 text-xs font-semibold hover:bg-stone-50 dark:hover:bg-stone-800 text-stone-900 dark:text-stone-100 transition-colors"
+          >
+            <Mail className="w-4 h-4 text-stone-500" />
+            Email Copy to Myself
+          </a>
+
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-sm font-medium transition-colors shadow-sm"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-xs font-semibold transition-colors shadow-sm"
           >
             <RotateCcw className="w-4 h-4" />
             Submit Another Request
           </button>
         </div>
+
+        {/* Footer Sub-link */}
+        <div className="pt-3 border-t border-stone-100 dark:border-stone-800 text-center">
+          <Link
+            href="/preview-email"
+            className="inline-flex items-center gap-1.5 text-xs text-stone-400 hover:text-stone-700 dark:hover:text-stone-300 transition-colors"
+          >
+            <span>Preview Client & Admin HTML Email Templates</span>
+            <ExternalLink className="w-3 h-3" />
+          </Link>
+        </div>
+
       </div>
     </div>
   );
@@ -1042,13 +1233,37 @@ Submitted at: ${new Date().toISOString()}
 
     setSubmitStatus("loading");
 
+    const currentUrl =
+      typeof window !== "undefined" && window.location.origin
+        ? window.location.origin
+        : (process.env.NEXT_PUBLIC_APP_URL || "https://client-onboarding-scope.vercel.app");
+
     try {
+      const adminHtml = generateAdminEmailHtml(formData, currentUrl);
+
       const payload = {
         access_key: WEB3FORMS_KEY,
         subject: `New Website Onboarding & Quote Request - ${formData.companyName}`,
         from_name: `${formData.fullName} (${formData.companyName})`,
         email: formData.email,
-        message: buildEmailSummary(),
+        replyto: formData.email,
+        message: adminHtml,
+        "Client Name": formData.fullName,
+        "Company Name": formData.companyName,
+        "Phone / WhatsApp": formData.phone,
+        "Website Scope":
+          formData.websiteCategory === "other"
+            ? `Custom: ${formData.websiteCategoryCustom}`
+            : formData.websiteCategory,
+        "Estimated Pages":
+          formData.estimatedPages === "custom"
+            ? `Custom: ${formData.estimatedPagesCustom}`
+            : formData.estimatedPages,
+        "Target Timeline":
+          formData.launchTimeline === "custom"
+            ? `Custom: ${formData.launchTimelineCustom}`
+            : formData.launchTimeline,
+        "Portal URL": currentUrl,
         botcheck: "",
       };
 
@@ -1071,7 +1286,7 @@ Submitted at: ${new Date().toISOString()}
     } catch (err) {
       console.error("Submission error:", err);
       const mailtoSubject = encodeURIComponent(`New Website Onboarding - ${formData.companyName}`);
-      const mailtoBody = encodeURIComponent(buildEmailSummary());
+      const mailtoBody = encodeURIComponent(generateAdminEmailPlainText(formData, currentUrl));
       window.open(`mailto:?subject=${mailtoSubject}&body=${mailtoBody}`, "_blank");
       setSubmitStatus("success");
     }
@@ -1108,9 +1323,19 @@ Submitted at: ${new Date().toISOString()}
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Link to Email Template Previews */}
+            <Link
+              href="/preview-email"
+              title="Preview Email Templates"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-50 dark:hover:bg-stone-900 transition-colors"
+            >
+              <Mail className="w-3.5 h-3.5 text-orange-600 dark:text-orange-500" />
+              <span className="hidden sm:inline">Email Previews</span>
+            </Link>
+
             {/* Step indicator */}
-            <span className="text-xs font-mono text-stone-500 dark:text-stone-400">
+            <span className="text-xs font-mono text-stone-500 dark:text-stone-400 px-1">
               {currentStep} / {totalSteps}
             </span>
 
