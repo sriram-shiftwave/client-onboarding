@@ -6,19 +6,22 @@ import {
   Building2,
   Mail,
   Phone,
-  FileText,
-  CheckCircle2,
-  AlertCircle,
+  Check,
   ChevronRight,
   ChevronLeft,
   Loader2,
   Send,
-  MessageCircle,
-  Star,
-  Sparkles,
+  MessageSquare,
   Globe,
   Clock,
   Shield,
+  Layers,
+  FileCheck2,
+  ArrowRight,
+  RotateCcw,
+  Sun,
+  Moon,
+  Laptop,
 } from "lucide-react";
 import {
   OnboardingFormData,
@@ -29,25 +32,26 @@ import {
   FEATURES,
   ASSET_ITEMS,
   TIMELINE_OPTIONS,
-  BUDGET_TIERS,
 } from "./types";
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Utility helpers
-// ─────────────────────────────────────────────────────────────────────────────
 
 function cn(...classes: (string | boolean | undefined | null)[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+const WEB3FORMS_KEY =
+  process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || "d3c3ceb3-b660-49d2-bf2c-07f0e7047445";
+
 // ─────────────────────────────────────────────────────────────────────────────
-// Section 1: Company & Contact Details
+// Form Field Components
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface SectionProps {
-  data: OnboardingFormData;
-  onChange: (field: keyof OnboardingFormData, value: string | boolean | string[]) => void;
-  errors: Partial<Record<keyof OnboardingFormData, string>>;
+interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  id: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  error?: string;
+  required?: boolean;
+  hint?: string;
 }
 
 function InputField({
@@ -56,52 +60,53 @@ function InputField({
   icon: Icon,
   error,
   required,
+  hint,
   ...props
-}: {
-  label: string;
-  id: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  error?: string;
-  required?: boolean;
-} & React.InputHTMLAttributes<HTMLInputElement>) {
+}: InputFieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor={id}
-        className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5"
-      >
-        {label}
-        {required && <span className="text-rose-500 text-xs">*</span>}
-      </label>
+      <div className="flex items-center justify-between">
+        <label
+          htmlFor={id}
+          className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400"
+        >
+          {label}
+          {required && <span className="text-neutral-900 dark:text-neutral-100 ml-1 font-bold">*</span>}
+        </label>
+        {hint && <span className="text-xs text-neutral-400 dark:text-neutral-500">{hint}</span>}
+      </div>
       <div className="relative">
         {Icon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 pointer-events-none">
             <Icon className="w-4 h-4" />
           </div>
         )}
         <input
           id={id}
           className={cn(
-            "w-full rounded-xl border bg-white dark:bg-slate-900/50 text-slate-900 dark:text-slate-100",
-            "py-3 pr-4 text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500",
-            "focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500",
-            "transition-all duration-200",
-            Icon ? "pl-10" : "pl-4",
+            "w-full rounded-xl border bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100",
+            "py-2.5 pr-3.5 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-500",
+            "focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-100 focus:border-neutral-900 dark:focus:border-neutral-100",
+            "transition-all duration-150",
+            Icon ? "pl-10" : "pl-3.5",
             error
-              ? "border-rose-400 bg-rose-50/30 dark:bg-rose-900/10"
-              : "border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600"
+              ? "border-red-500 dark:border-red-500 focus:ring-red-500"
+              : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700"
           )}
           {...props}
         />
       </div>
-      {error && (
-        <p className="flex items-center gap-1 text-xs text-rose-500 mt-0.5">
-          <AlertCircle className="w-3 h-3 flex-shrink-0" />
-          {error}
-        </p>
-      )}
+      {error && <p className="text-xs text-red-600 dark:text-red-400 mt-0.5">{error}</p>}
     </div>
   );
+}
+
+interface TextareaFieldProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  label: string;
+  id: string;
+  error?: string;
+  required?: boolean;
+  hint?: string;
 }
 
 function TextareaField({
@@ -111,76 +116,80 @@ function TextareaField({
   required,
   hint,
   ...props
-}: {
-  label: string;
-  id: string;
-  error?: string;
-  required?: boolean;
-  hint?: string;
-} & React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+}: TextareaFieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor={id}
-        className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5"
-      >
-        {label}
-        {required && <span className="text-rose-500 text-xs">*</span>}
-      </label>
-      {hint && <p className="text-xs text-slate-500 dark:text-slate-400 -mt-1">{hint}</p>}
+      <div className="flex items-center justify-between">
+        <label
+          htmlFor={id}
+          className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400"
+        >
+          {label}
+          {required && <span className="text-neutral-900 dark:text-neutral-100 ml-1 font-bold">*</span>}
+        </label>
+        {hint && <span className="text-xs text-neutral-400 dark:text-neutral-500">{hint}</span>}
+      </div>
       <textarea
         id={id}
         className={cn(
-          "w-full rounded-xl border bg-white dark:bg-slate-900/50 text-slate-900 dark:text-slate-100",
-          "px-4 py-3 text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500",
-          "focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500",
-          "transition-all duration-200 resize-none",
+          "w-full rounded-xl border bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100",
+          "p-3 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-500",
+          "focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-100 focus:border-neutral-900 dark:focus:border-neutral-100",
+          "transition-all duration-150 resize-y min-h-[90px]",
           error
-            ? "border-rose-400 bg-rose-50/30"
-            : "border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600"
+            ? "border-red-500 dark:border-red-500 focus:ring-red-500"
+            : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700"
         )}
         {...props}
       />
-      {error && (
-        <p className="flex items-center gap-1 text-xs text-rose-500 mt-0.5">
-          <AlertCircle className="w-3 h-3 flex-shrink-0" />
-          {error}
-        </p>
-      )}
+      {error && <p className="text-xs text-red-600 dark:text-red-400 mt-0.5">{error}</p>}
     </div>
   );
 }
 
-export function Section1({ data, onChange, errors }: SectionProps) {
+// ─────────────────────────────────────────────────────────────────────────────
+// Form Section Props
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface SectionProps {
+  data: OnboardingFormData;
+  onChange: (field: keyof OnboardingFormData, value: string | boolean | string[]) => void;
+  errors: Partial<Record<string, string>>;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Section 1: Company & Contact
+// ─────────────────────────────────────────────────────────────────────────────
+
+function Section1({ data, onChange, errors }: SectionProps) {
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <InputField
           label="Full Name"
           id="fullName"
           icon={User}
-          placeholder="Jane Smith"
+          placeholder="e.g. Jane Smith"
           value={data.fullName}
           onChange={(e) => onChange("fullName", e.target.value)}
           error={errors.fullName}
           required
           autoComplete="name"
-          type="text"
         />
         <InputField
           label="Company / Brand Name"
           id="companyName"
           icon={Building2}
-          placeholder="Acme Corporation"
+          placeholder="e.g. Acme Studio"
           value={data.companyName}
           onChange={(e) => onChange("companyName", e.target.value)}
           error={errors.companyName}
           required
           autoComplete="organization"
-          type="text"
         />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <InputField
           label="Email Address"
           id="email"
@@ -190,33 +199,31 @@ export function Section1({ data, onChange, errors }: SectionProps) {
           onChange={(e) => onChange("email", e.target.value)}
           error={errors.email}
           required
-          autoComplete="email"
           type="email"
-          inputMode="email"
+          autoComplete="email"
         />
         <InputField
           label="Phone / WhatsApp Number"
           id="phone"
           icon={Phone}
-          placeholder="+1 234 567 8900"
+          placeholder="+1 (555) 000-0000"
           value={data.phone}
           onChange={(e) => onChange("phone", e.target.value)}
           error={errors.phone}
           required
-          autoComplete="tel"
           type="tel"
-          inputMode="tel"
+          autoComplete="tel"
         />
       </div>
+
       <TextareaField
-        label="Business Overview"
+        label="Business Overview & Website Goals"
         id="businessOverview"
-        placeholder="Tell us: What does your business do, who are your customers, and what is the main goal of this website? (e.g., generate leads, sell products, showcase a portfolio)"
+        placeholder="Briefly describe what your business does, who your target audience is, and the primary objective of this new website (e.g., generate sales leads, showcase work, sell physical products, establish authority)..."
         value={data.businessOverview}
         onChange={(e) => onChange("businessOverview", e.target.value)}
         error={errors.businessOverview}
         required
-        hint="Help us understand your business so we can build the perfect website for you."
         rows={4}
       />
     </div>
@@ -227,166 +234,204 @@ export function Section1({ data, onChange, errors }: SectionProps) {
 // Section 2: Website Type & Scope
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function Section2({ data, onChange, errors }: SectionProps) {
-  const toggleFeature = (featureId: string) => {
-    const current = data.features;
-    const updated = current.includes(featureId)
-      ? current.filter((f) => f !== featureId)
-      : [...current, featureId];
-    onChange("features", updated);
+function Section2({ data, onChange, errors }: SectionProps) {
+  const isCustomCategory = data.websiteCategory === "other";
+  const isCustomPages = data.estimatedPages === "custom";
+  const isCustomFeatures = data.features.includes("custom");
+
+  const toggleFeature = (id: string) => {
+    if (data.features.includes(id)) {
+      onChange(
+        "features",
+        data.features.filter((f) => f !== id)
+      );
+    } else {
+      onChange("features", [...data.features, id]);
+    }
   };
 
   return (
     <div className="space-y-8">
-      {/* Website Category */}
+      {/* Category Selection */}
       <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-            Website Category
-          </h3>
-          <span className="text-rose-500 text-xs">*</span>
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
+            Website Category <span className="text-neutral-900 dark:text-neutral-100 font-bold">*</span>
+          </label>
+          <span className="text-xs text-neutral-400 dark:text-neutral-500">Select one</span>
         </div>
-        {errors.websiteCategory && (
-          <p className="flex items-center gap-1 text-xs text-rose-500">
-            <AlertCircle className="w-3 h-3" />
-            {errors.websiteCategory}
-          </p>
-        )}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {WEBSITE_CATEGORIES.map((cat) => (
-            <button
-              key={cat.value}
-              type="button"
-              onClick={() => onChange("websiteCategory", cat.value)}
-              className={cn(
-                "flex flex-col items-start gap-2 p-4 rounded-xl border-2 text-left transition-all duration-200",
-                "hover:border-indigo-400 hover:shadow-md hover:shadow-indigo-100 dark:hover:shadow-indigo-900/30",
-                data.websiteCategory === cat.value
-                  ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 shadow-md shadow-indigo-100 dark:shadow-indigo-900/20"
-                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50"
-              )}
-              aria-pressed={data.websiteCategory === cat.value}
-            >
-              <span className="text-2xl">{cat.icon}</span>
-              <div>
-                <p className={cn(
-                  "text-sm font-semibold",
-                  data.websiteCategory === cat.value
-                    ? "text-indigo-700 dark:text-indigo-300"
-                    : "text-slate-800 dark:text-slate-200"
-                )}>
-                  {cat.label}
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {WEBSITE_CATEGORIES.map((cat) => {
+            const isSelected = data.websiteCategory === cat.value;
+            return (
+              <button
+                key={cat.value}
+                type="button"
+                onClick={() => onChange("websiteCategory", cat.value)}
+                className={cn(
+                  "p-3.5 rounded-xl border text-left flex flex-col justify-between transition-all duration-150",
+                  isSelected
+                    ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800/60 ring-1 ring-neutral-900 dark:ring-white"
+                    : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900"
+                )}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                    {cat.label}
+                  </span>
+                  <div
+                    className={cn(
+                      "w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 mt-0.5",
+                      isSelected
+                        ? "border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900"
+                        : "border-neutral-300 dark:border-neutral-700"
+                    )}
+                  >
+                    {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white dark:bg-neutral-900" />}
+                  </div>
+                </div>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">
                   {cat.description}
                 </p>
-              </div>
-              {data.websiteCategory === cat.value && (
-                <CheckCircle2 className="absolute top-3 right-3 w-4 h-4 text-indigo-500" />
-              )}
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
+
+        {/* None of the above - custom category input */}
+        {isCustomCategory && (
+          <div className="pt-2 animate-fade-slide">
+            <InputField
+              label="Describe Your Custom Website Scope"
+              id="websiteCategoryCustom"
+              placeholder="e.g. A client portal with real-time analytics and document signing"
+              value={data.websiteCategoryCustom ?? ""}
+              onChange={(e) => onChange("websiteCategoryCustom", e.target.value)}
+              error={errors.websiteCategoryCustom}
+              required
+            />
+          </div>
+        )}
+        {errors.websiteCategory && (
+          <p className="text-xs text-red-600 dark:text-red-400">{errors.websiteCategory}</p>
+        )}
       </div>
 
       {/* Estimated Pages */}
       <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-            Estimated Number of Pages
-          </h3>
-          <span className="text-rose-500 text-xs">*</span>
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
+            Estimated Number of Pages <span className="text-neutral-900 dark:text-neutral-100 font-bold">*</span>
+          </label>
+          <span className="text-xs text-neutral-400 dark:text-neutral-500">Estimate</span>
         </div>
-        {errors.estimatedPages && (
-          <p className="flex items-center gap-1 text-xs text-rose-500">
-            <AlertCircle className="w-3 h-3" />
-            {errors.estimatedPages}
-          </p>
+
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+          {PAGE_ESTIMATES.map((opt) => {
+            const isSelected = data.estimatedPages === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => onChange("estimatedPages", opt.value)}
+                className={cn(
+                  "p-3 rounded-xl border text-center transition-all duration-150",
+                  isSelected
+                    ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800/60 ring-1 ring-neutral-900 dark:ring-white"
+                    : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900"
+                )}
+              >
+                <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  {opt.label}
+                </div>
+                <div className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5 truncate">
+                  {opt.sublabel}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Custom page scope */}
+        {isCustomPages && (
+          <div className="pt-2 animate-fade-slide">
+            <InputField
+              label="Describe Your Page Count or Architecture"
+              id="estimatedPagesCustom"
+              placeholder="e.g. 15 pages + dynamic blog posts and team member profiles"
+              value={data.estimatedPagesCustom ?? ""}
+              onChange={(e) => onChange("estimatedPagesCustom", e.target.value)}
+              error={errors.estimatedPagesCustom}
+              required
+            />
+          </div>
         )}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {PAGE_ESTIMATES.map((page) => (
-            <button
-              key={page.value}
-              type="button"
-              onClick={() => onChange("estimatedPages", page.value)}
-              className={cn(
-                "flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 text-center transition-all duration-200",
-                "hover:border-indigo-400 hover:shadow-sm",
-                data.estimatedPages === page.value
-                  ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 shadow-sm"
-                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50"
-              )}
-              aria-pressed={data.estimatedPages === page.value}
-            >
-              <span className={cn(
-                "text-lg font-bold",
-                data.estimatedPages === page.value
-                  ? "text-indigo-600 dark:text-indigo-400"
-                  : "text-slate-700 dark:text-slate-300"
-              )}>
-                {page.label}
-              </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400">{page.sublabel}</span>
-            </button>
-          ))}
-        </div>
+        {errors.estimatedPages && (
+          <p className="text-xs text-red-600 dark:text-red-400">{errors.estimatedPages}</p>
+        )}
       </div>
 
-      {/* Features */}
+      {/* Features Checkboxes */}
       <div className="space-y-3">
-        <div>
-          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-            Required Features
-          </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Select all features you need (optional — select none if basic site)
-          </p>
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
+            Key Features & Integrations
+          </label>
+          <span className="text-xs text-neutral-400 dark:text-neutral-500">Optional</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           {FEATURES.map((feature) => {
-            const isSelected = data.features.includes(feature.id);
+            const isChecked = data.features.includes(feature.id);
             return (
               <button
                 key={feature.id}
                 type="button"
                 onClick={() => toggleFeature(feature.id)}
                 className={cn(
-                  "flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all duration-200 group",
-                  "hover:border-indigo-400 hover:shadow-sm",
-                  isSelected
-                    ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30"
-                    : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50"
+                  "p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all duration-150",
+                  isChecked
+                    ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800/60"
+                    : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900"
                 )}
-                aria-pressed={isSelected}
               >
-                <span className="text-xl mt-0.5 flex-shrink-0">{feature.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <p className={cn(
-                    "text-sm font-semibold",
-                    isSelected ? "text-indigo-700 dark:text-indigo-300" : "text-slate-800 dark:text-slate-200"
-                  )}>
-                    {feature.label}
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-                <div className={cn(
-                  "w-5 h-5 rounded-md border-2 flex-shrink-0 flex items-center justify-center transition-all",
-                  isSelected
-                    ? "bg-indigo-500 border-indigo-500"
-                    : "border-slate-300 dark:border-slate-600"
-                )}>
-                  {isSelected && (
-                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
+                <div
+                  className={cn(
+                    "w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors",
+                    isChecked
+                      ? "border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900"
+                      : "border-neutral-300 dark:border-neutral-700"
                   )}
+                >
+                  {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                    {feature.label}
+                  </div>
+                  <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 leading-relaxed">
+                    {feature.description}
+                  </div>
                 </div>
               </button>
             );
           })}
         </div>
+
+        {/* Custom features text */}
+        {isCustomFeatures && (
+          <div className="pt-2 animate-fade-slide">
+            <TextareaField
+              label="Describe Custom Features or Integrations"
+              id="customFeaturesText"
+              placeholder="e.g. HubSpot CRM sync, custom quotation calculator, customer login area, multi-language switcher..."
+              value={data.customFeaturesText ?? ""}
+              onChange={(e) => onChange("customFeaturesText", e.target.value)}
+              rows={3}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -396,438 +441,347 @@ export function Section2({ data, onChange, errors }: SectionProps) {
 // Section 3: Asset Matrix
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function Section3({ data, onChange, errors }: SectionProps) {
+function Section3({ data, onChange, errors }: SectionProps) {
   return (
-    <div className="space-y-4">
-      <p className="text-sm text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-        <span className="font-semibold text-slate-700 dark:text-slate-300">📋 Quick Inventory: </span>
-        For each item below, let us know if you already have it ready or if you need us to provide/set it up. This directly affects the project scope and pricing.
-      </p>
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <p className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
+          Asset Readiness Matrix <span className="text-neutral-900 dark:text-neutral-100 font-bold">*</span>
+        </p>
+        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          Let us know which assets you already have on hand and which you would like us to produce or configure.
+        </p>
+      </div>
+
       <div className="space-y-3">
         {ASSET_ITEMS.map((item) => {
           const value = data[item.id] as string;
-          const error = errors[item.id];
+          const hasError = !!errors[item.id];
+
           return (
             <div
               key={item.id}
               className={cn(
-                "rounded-xl border-2 p-4 transition-all duration-200",
-                error ? "border-rose-300 dark:border-rose-700" : "border-slate-200 dark:border-slate-700"
+                "p-4 rounded-xl border bg-white dark:bg-neutral-900 transition-all",
+                hasError
+                  ? "border-red-400 dark:border-red-500"
+                  : "border-neutral-200 dark:border-neutral-800"
               )}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                <div className="flex items-center gap-3 sm:flex-1 min-w-0">
-                  <span className="text-2xl flex-shrink-0">{item.icon}</span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
-                      {item.label}
-                    </p>
-                    {error && (
-                      <p className="flex items-center gap-1 text-xs text-rose-500 mt-0.5">
-                        <AlertCircle className="w-3 h-3 flex-shrink-0" />
-                        {error}
-                      </p>
-                    )}
-                  </div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="sm:max-w-[45%]">
+                  <h4 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                    {item.label}
+                  </h4>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                    {item.description}
+                  </p>
                 </div>
-                <div className="flex flex-col xs:flex-row gap-2 sm:flex-shrink-0">
-                  <label className={cn(
-                    "flex items-center gap-2.5 px-4 py-2.5 rounded-xl border-2 cursor-pointer transition-all duration-200 text-xs font-medium",
-                    "hover:border-emerald-400",
-                    value === "have"
-                      ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300"
-                      : "border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900/50"
-                  )}>
-                    <input
-                      type="radio"
-                      name={item.id}
-                      value="have"
-                      checked={value === "have"}
-                      onChange={() => onChange(item.id, "have")}
-                      className="sr-only"
-                    />
-                    <CheckCircle2 className={cn(
-                      "w-4 h-4 flex-shrink-0",
-                      value === "have" ? "text-emerald-500" : "text-slate-300 dark:text-slate-600"
-                    )} />
+
+                <div className="grid grid-cols-2 gap-2 sm:w-[50%]">
+                  <button
+                    type="button"
+                    onClick={() => onChange(item.id, "have")}
+                    className={cn(
+                      "px-3 py-2 text-xs font-medium rounded-lg border text-center transition-all",
+                      value === "have"
+                        ? "border-neutral-900 dark:border-white bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 font-semibold"
+                        : "border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:border-neutral-300 dark:hover:border-neutral-700"
+                    )}
+                  >
                     {item.haveLabel}
-                  </label>
-                  <label className={cn(
-                    "flex items-center gap-2.5 px-4 py-2.5 rounded-xl border-2 cursor-pointer transition-all duration-200 text-xs font-medium",
-                    "hover:border-indigo-400",
-                    value === "need"
-                      ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300"
-                      : "border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900/50"
-                  )}>
-                    <input
-                      type="radio"
-                      name={item.id}
-                      value="need"
-                      checked={value === "need"}
-                      onChange={() => onChange(item.id, "need")}
-                      className="sr-only"
-                    />
-                    <Sparkles className={cn(
-                      "w-4 h-4 flex-shrink-0",
-                      value === "need" ? "text-indigo-500" : "text-slate-300 dark:text-slate-600"
-                    )} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onChange(item.id, "need")}
+                    className={cn(
+                      "px-3 py-2 text-xs font-medium rounded-lg border text-center transition-all",
+                      value === "need"
+                        ? "border-neutral-900 dark:border-white bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 font-semibold"
+                        : "border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:border-neutral-300 dark:hover:border-neutral-700"
+                    )}
+                  >
                     {item.needLabel}
-                  </label>
+                  </button>
                 </div>
               </div>
+              {hasError && (
+                <p className="text-xs text-red-600 dark:text-red-400 mt-2">
+                  Please select whether you have this asset or need it provided.
+                </p>
+              )}
             </div>
           );
         })}
       </div>
+
+      <TextareaField
+        label="Additional Asset Notes (Optional)"
+        id="assetNotes"
+        placeholder="e.g. Existing brand assets are hosted on Google Drive; domain is registered with Cloudflare..."
+        value={data.assetNotes ?? ""}
+        onChange={(e) => onChange("assetNotes", e.target.value)}
+        rows={2}
+      />
     </div>
   );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Section 4: References, Timeline & Budget
+// Section 4: References & Timeline (Budget Tier REMOVED)
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function Section4({ data, onChange, errors }: SectionProps) {
+function Section4({ data, onChange, errors }: SectionProps) {
+  const isCustomTimeline = data.launchTimeline === "custom";
+
   return (
     <div className="space-y-8">
-      {/* Reference URLs */}
-      <TextareaField
-        label="Reference / Inspiration Websites"
-        id="referenceUrls"
-        placeholder={`1. https://example.com — I love their clean layout and how they present their services\n2. https://another-site.com — The color scheme and photography style appeals to me\n3. https://third-site.com — Their booking flow is exactly what I'm looking for`}
-        value={data.referenceUrls}
-        onChange={(e) => onChange("referenceUrls", e.target.value)}
-        error={errors.referenceUrls}
-        hint="Share 1–3 websites you admire and briefly describe what you like about each. This helps us match your vision."
-        rows={5}
-      />
-
-      {/* Timeline */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-slate-500" />
-          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-            Expected Launch Timeline
-          </h3>
-          <span className="text-rose-500 text-xs">*</span>
-        </div>
-        {errors.launchTimeline && (
-          <p className="flex items-center gap-1 text-xs text-rose-500">
-            <AlertCircle className="w-3 h-3" />
-            {errors.launchTimeline}
-          </p>
-        )}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {TIMELINE_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => onChange("launchTimeline", opt.value)}
-              className={cn(
-                "flex flex-col items-center gap-2 p-5 rounded-xl border-2 text-center transition-all duration-200",
-                "hover:shadow-md",
-                data.launchTimeline === opt.value
-                  ? `${opt.selectedBorder} ${opt.selectedBg} shadow-sm`
-                  : `${opt.border} bg-white dark:bg-slate-900/50`
-              )}
-              aria-pressed={data.launchTimeline === opt.value}
-            >
-              <span className="text-3xl">{opt.icon}</span>
-              <div>
-                <p className={cn(
-                  "text-sm font-bold",
-                  data.launchTimeline === opt.value ? opt.color : "text-slate-700 dark:text-slate-300"
-                )}>
-                  {opt.label}
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  {opt.sublabel}
-                </p>
-              </div>
-              {data.launchTimeline === opt.value && (
-                <CheckCircle2 className={cn("w-5 h-5", opt.color)} />
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Budget */}
-      <div className="space-y-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-              Estimated Budget Tier
-            </h3>
-            <span className="text-rose-500 text-xs">*</span>
-          </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Price ranges are approximate guides. Final quote depends on your specific requirements.
-          </p>
-        </div>
-        {errors.budgetTier && (
-          <p className="flex items-center gap-1 text-xs text-rose-500">
-            <AlertCircle className="w-3 h-3" />
-            {errors.budgetTier}
-          </p>
-        )}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {BUDGET_TIERS.map((tier) => (
-            <button
-              key={tier.value}
-              type="button"
-              onClick={() => onChange("budgetTier", tier.value)}
-              className={cn(
-                "flex flex-col gap-3 p-5 rounded-xl border-2 text-left transition-all duration-200 relative overflow-hidden",
-                "hover:shadow-lg",
-                data.budgetTier === tier.value
-                  ? "border-indigo-500 shadow-md shadow-indigo-100 dark:shadow-indigo-900/20"
-                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50"
-              )}
-              aria-pressed={data.budgetTier === tier.value}
-            >
-              {tier.popular && (
-                <div className="absolute top-3 right-3 flex items-center gap-1 bg-indigo-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                  <Star className="w-3 h-3" />
-                  Popular
-                </div>
-              )}
-              <div className="flex items-center gap-3">
-                <div className={cn(
-                  "w-10 h-10 rounded-xl flex items-center justify-center text-xl bg-gradient-to-br flex-shrink-0",
-                  tier.gradient
-                )}>
-                  {tier.icon}
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                    {tier.label}
-                  </p>
-                  <p className={cn(
-                    "text-xs font-semibold bg-gradient-to-r bg-clip-text text-transparent",
-                    tier.gradient
-                  )}>
-                    {tier.range}
-                  </p>
-                </div>
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                {tier.description}
-              </p>
-              <ul className="space-y-1">
-                {tier.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              {data.budgetTier === tier.value && (
-                <div className={cn(
-                  "absolute inset-0 rounded-[11px] bg-gradient-to-br opacity-5 pointer-events-none",
-                  tier.gradient
-                )} />
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Section 5: Terms & Submit
-// ─────────────────────────────────────────────────────────────────────────────
-
-export function Section5({ data, onChange, errors }: SectionProps) {
-  return (
-    <div className="space-y-6">
-      <div className="bg-gradient-to-br from-slate-50 to-indigo-50/30 dark:from-slate-800/50 dark:to-indigo-900/10 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-4">
-        <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-indigo-500" />
-          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-            Freelance Working Terms & Liability Protection
-          </h3>
-        </div>
-        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-          Please read and confirm the following working terms before submitting your quote request. These protect both parties and ensure a smooth project delivery.
-        </p>
-
-        {/* Term 1 */}
-        <label className={cn(
-          "flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 group",
-          data.agreedToRevisionTerms
-            ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
-            : "border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700 bg-white dark:bg-slate-900/30"
-        )}>
-          <div className={cn(
-            "w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center mt-0.5 transition-all",
-            data.agreedToRevisionTerms
-              ? "bg-indigo-500 border-indigo-500"
-              : "border-slate-300 dark:border-slate-600"
-          )}>
-            {data.agreedToRevisionTerms && (
-              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            )}
-          </div>
-          <input
-            type="checkbox"
-            className="sr-only"
-            checked={data.agreedToRevisionTerms}
-            onChange={(e) => onChange("agreedToRevisionTerms", e.target.checked)}
-          />
-          <div>
-            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-              Design Revision & Payment Milestone Agreement
-            </p>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              I understand and agree that the quoted price includes <strong>2 rounds of design revisions</strong>. A <strong>50% advance deposit</strong> is required to commence work. The remaining 50% balance is due and payable before the website goes live. Additional revisions beyond the included rounds may incur extra charges.
-            </p>
-            {errors.agreedToRevisionTerms && (
-              <p className="flex items-center gap-1 text-xs text-rose-500 mt-1">
-                <AlertCircle className="w-3 h-3 flex-shrink-0" />
-                {errors.agreedToRevisionTerms}
-              </p>
-            )}
-          </div>
-        </label>
-
-        {/* Term 2 */}
-        <label className={cn(
-          "flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 group",
-          data.agreedToLiabilityTerms
-            ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
-            : "border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700 bg-white dark:bg-slate-900/30"
-        )}>
-          <div className={cn(
-            "w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center mt-0.5 transition-all",
-            data.agreedToLiabilityTerms
-              ? "bg-indigo-500 border-indigo-500"
-              : "border-slate-300 dark:border-slate-600"
-          )}>
-            {data.agreedToLiabilityTerms && (
-              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            )}
-          </div>
-          <input
-            type="checkbox"
-            className="sr-only"
-            checked={data.agreedToLiabilityTerms}
-            onChange={(e) => onChange("agreedToLiabilityTerms", e.target.checked)}
-          />
-          <div>
-            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-              Third-Party Costs & Liability Limitation Agreement
-            </p>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              I understand and agree that <strong>third-party costs</strong> (including domain registration, web hosting, premium plugins, stock photography, and payment gateway fees) are <strong>paid directly by the client</strong> and are not included in the design fee. Furthermore, the designer&apos;s maximum legal liability for any claim arising from this project is strictly limited to the <strong>total fee paid for the project</strong>.
-            </p>
-            {errors.agreedToLiabilityTerms && (
-              <p className="flex items-center gap-1 text-xs text-rose-500 mt-1">
-                <AlertCircle className="w-3 h-3 flex-shrink-0" />
-                {errors.agreedToLiabilityTerms}
-              </p>
-            )}
-          </div>
-        </label>
-      </div>
-
-      {/* Summary reminder */}
-      <div className="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
-        <FileText className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-        <div className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
-          <strong className="font-semibold">What happens next?</strong> After submission, you will receive a confirmation email. We will review your requirements and send a detailed, itemized quote within <strong>24–48 business hours</strong>. No payment is required at this stage.
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Progress Stepper
-// ─────────────────────────────────────────────────────────────────────────────
-
-interface StepperProps {
-  currentStep: number;
-  totalSteps: number;
-}
-
-export function Stepper({ currentStep, totalSteps }: StepperProps) {
-  const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
-
-  return (
-    <div className="w-full">
-      {/* Mobile: simple progress bar */}
-      <div className="sm:hidden space-y-2 mb-6">
-        <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
-          <span className="font-medium text-indigo-600 dark:text-indigo-400">
-            Step {currentStep} of {totalSteps}
-          </span>
-          <span>{SECTION_META[currentStep - 1].title}</span>
-        </div>
-        <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Desktop: dot stepper */}
-      <div className="hidden sm:block relative mb-10">
-        {/* Background track */}
-        <div className="absolute top-5 left-0 right-0 h-0.5 bg-slate-200 dark:bg-slate-700 mx-8" />
-        {/* Progress fill */}
-        <div
-          className="absolute top-5 left-0 h-0.5 bg-gradient-to-r from-indigo-500 to-violet-500 transition-all duration-500 ease-out mx-8"
-          style={{ width: `calc(${progress}% * (1 - 16/${totalSteps * 100}))` }}
+      {/* Reference Websites */}
+      <div className="space-y-2">
+        <TextareaField
+          label="Inspiration & Reference Websites"
+          id="referenceUrls"
+          placeholder="Paste 1–3 website links you like and briefly describe what you like about them (e.g. 'stripe.com for typography, linear.app for interactions and simplicity')..."
+          value={data.referenceUrls}
+          onChange={(e) => onChange("referenceUrls", e.target.value)}
+          rows={3}
+          hint="Optional but highly recommended"
         />
-        {/* Steps */}
-        <div className="relative flex justify-between">
-          {SECTION_META.map((section) => {
-            const isCompleted = section.id < currentStep;
-            const isCurrent = section.id === currentStep;
+      </div>
+
+      {/* Expected Timeline */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
+            Target Launch Timeline <span className="text-neutral-900 dark:text-neutral-100 font-bold">*</span>
+          </label>
+          <span className="text-xs text-neutral-400 dark:text-neutral-500">Select one</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {TIMELINE_OPTIONS.map((opt) => {
+            const isSelected = data.launchTimeline === opt.value;
             return (
-              <div key={section.id} className="flex flex-col items-center gap-2 group">
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => onChange("launchTimeline", opt.value)}
+                className={cn(
+                  "p-3.5 rounded-xl border text-left flex items-start justify-between transition-all duration-150",
+                  isSelected
+                    ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800/60 ring-1 ring-neutral-900 dark:ring-white"
+                    : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900"
+                )}
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                      {opt.label}
+                    </span>
+                    <span className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">
+                      ({opt.sublabel})
+                    </span>
+                  </div>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">
+                    {opt.description}
+                  </p>
+                </div>
                 <div
                   className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300 z-10",
-                    isCompleted
-                      ? "bg-indigo-500 border-indigo-500 text-white shadow-md shadow-indigo-200 dark:shadow-indigo-900/50"
-                      : isCurrent
-                      ? "bg-white dark:bg-slate-900 border-indigo-500 text-indigo-600 dark:text-indigo-400 shadow-lg shadow-indigo-100 dark:shadow-indigo-900/50 scale-110"
-                      : "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-400"
+                    "w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 mt-0.5",
+                    isSelected
+                      ? "border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900"
+                      : "border-neutral-300 dark:border-neutral-700"
                   )}
                 >
-                  {isCompleted ? (
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  ) : (
-                    section.id
-                  )}
+                  {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white dark:bg-neutral-900" />}
                 </div>
-                <div className="text-center">
-                  <p className={cn(
-                    "text-xs font-semibold whitespace-nowrap",
-                    isCurrent
-                      ? "text-indigo-600 dark:text-indigo-400"
-                      : isCompleted
-                      ? "text-slate-600 dark:text-slate-400"
-                      : "text-slate-400 dark:text-slate-500"
-                  )}>
-                    {section.title}
-                  </p>
-                </div>
-              </div>
+              </button>
             );
           })}
         </div>
+
+        {/* None of the above - custom deadline */}
+        {isCustomTimeline && (
+          <div className="pt-2 animate-fade-slide">
+            <InputField
+              label="Specify Your Target Launch Date or Timeline"
+              id="launchTimelineCustom"
+              placeholder="e.g. Must launch before product demo on November 15th"
+              value={data.launchTimelineCustom ?? ""}
+              onChange={(e) => onChange("launchTimelineCustom", e.target.value)}
+              error={errors.launchTimelineCustom}
+              required
+            />
+          </div>
+        )}
+        {errors.launchTimeline && (
+          <p className="text-xs text-red-600 dark:text-red-400">{errors.launchTimeline}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Section 5: Review & Working Terms
+// ─────────────────────────────────────────────────────────────────────────────
+
+function Section5({ data, onChange, errors }: SectionProps) {
+  const selectedCategory = WEBSITE_CATEGORIES.find((c) => c.value === data.websiteCategory);
+  const selectedTimeline = TIMELINE_OPTIONS.find((t) => t.value === data.launchTimeline);
+  const selectedFeatures = FEATURES.filter((f) => data.features.includes(f.id));
+
+  return (
+    <div className="space-y-6">
+      {/* Project Summary Card */}
+      <div className="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/40 space-y-3">
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+          Scope Summary
+        </h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+          <div>
+            <span className="text-neutral-500 dark:text-neutral-400">Client: </span>
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+              {data.fullName || "—"} ({data.companyName || "—"})
+            </span>
+          </div>
+          <div>
+            <span className="text-neutral-500 dark:text-neutral-400">Email: </span>
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+              {data.email || "—"}
+            </span>
+          </div>
+          <div>
+            <span className="text-neutral-500 dark:text-neutral-400">Website Type: </span>
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+              {data.websiteCategory === "other"
+                ? `Custom: ${data.websiteCategoryCustom || "Not specified"}`
+                : selectedCategory?.label || "—"}
+            </span>
+          </div>
+          <div>
+            <span className="text-neutral-500 dark:text-neutral-400">Estimated Pages: </span>
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+              {data.estimatedPages === "custom"
+                ? `Custom: ${data.estimatedPagesCustom || "Not specified"}`
+                : `${data.estimatedPages} Pages`}
+            </span>
+          </div>
+          <div className="sm:col-span-2">
+            <span className="text-neutral-500 dark:text-neutral-400">Timeline: </span>
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+              {data.launchTimeline === "custom"
+                ? `Custom Target: ${data.launchTimelineCustom || "Not specified"}`
+                : `${selectedTimeline?.label || "—"} (${selectedTimeline?.sublabel || ""})`}
+            </span>
+          </div>
+          {selectedFeatures.length > 0 && (
+            <div className="sm:col-span-2">
+              <span className="text-neutral-500 dark:text-neutral-400">Features: </span>
+              <span className="font-medium text-neutral-900 dark:text-neutral-100">
+                {selectedFeatures.map((f) => f.label).join(", ")}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Mandatory Freelance Terms & Liability Protection */}
+      <div className="space-y-4">
+        <div className="space-y-1">
+          <p className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
+            Freelance Working Terms & Liability Agreement <span className="text-neutral-900 dark:text-neutral-100 font-bold">*</span>
+          </p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+            Please acknowledge the standard project working agreements before sending your request.
+          </p>
+        </div>
+
+        {/* Checkbox 1: Revisions & 50% milestone */}
+        <label
+          htmlFor="agreedToRevisionTerms"
+          className={cn(
+            "p-4 rounded-xl border flex items-start gap-3.5 cursor-pointer transition-all",
+            data.agreedToRevisionTerms
+              ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800/40"
+              : errors.agreedToRevisionTerms
+              ? "border-red-400 dark:border-red-500 bg-red-50/20"
+              : "border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-neutral-300"
+          )}
+        >
+          <input
+            id="agreedToRevisionTerms"
+            type="checkbox"
+            checked={data.agreedToRevisionTerms}
+            onChange={(e) => onChange("agreedToRevisionTerms", e.target.checked)}
+            className="sr-only"
+          />
+          <div
+            className={cn(
+              "w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors",
+              data.agreedToRevisionTerms
+                ? "border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900"
+                : "border-neutral-300 dark:border-neutral-700"
+            )}
+          >
+            {data.agreedToRevisionTerms && <Check className="w-3 h-3 stroke-[3]" />}
+          </div>
+          <div className="text-xs leading-relaxed text-neutral-700 dark:text-neutral-300">
+            <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+              Design Revisions & Milestone Advance:
+            </span>{" "}
+            Client agrees that the proposal quote includes 2 comprehensive rounds of design revisions and requires a 50% advance milestone deposit prior to starting design and development work (with the remaining 50% balance payable upon final staging approval before live domain deployment).
+          </div>
+        </label>
+        {errors.agreedToRevisionTerms && (
+          <p className="text-xs text-red-600 dark:text-red-400 -mt-2">
+            {errors.agreedToRevisionTerms}
+          </p>
+        )}
+
+        {/* Checkbox 2: Third-party costs & limited liability */}
+        <label
+          htmlFor="agreedToLiabilityTerms"
+          className={cn(
+            "p-4 rounded-xl border flex items-start gap-3.5 cursor-pointer transition-all",
+            data.agreedToLiabilityTerms
+              ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800/40"
+              : errors.agreedToLiabilityTerms
+              ? "border-red-400 dark:border-red-500 bg-red-50/20"
+              : "border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-neutral-300"
+          )}
+        >
+          <input
+            id="agreedToLiabilityTerms"
+            type="checkbox"
+            checked={data.agreedToLiabilityTerms}
+            onChange={(e) => onChange("agreedToLiabilityTerms", e.target.checked)}
+            className="sr-only"
+          />
+          <div
+            className={cn(
+              "w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors",
+              data.agreedToLiabilityTerms
+                ? "border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900"
+                : "border-neutral-300 dark:border-neutral-700"
+            )}
+          >
+            {data.agreedToLiabilityTerms && <Check className="w-3 h-3 stroke-[3]" />}
+          </div>
+          <div className="text-xs leading-relaxed text-neutral-700 dark:text-neutral-300">
+            <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+              Third-Party Costs & Legal Liability Limitation:
+            </span>{" "}
+            Client agrees that ongoing third-party subscriptions and fees (domain renewal, web hosting accounts, paid plugins/APIs, payment processor merchant fees) are billed directly to the client, and the designer's maximum cumulative legal liability under any circumstance is strictly limited to the total professional service fee paid for this project.
+          </div>
+        </label>
+        {errors.agreedToLiabilityTerms && (
+          <p className="text-xs text-red-600 dark:text-red-400 -mt-2">
+            {errors.agreedToLiabilityTerms}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -837,218 +791,123 @@ export function Stepper({ currentStep, totalSteps }: StepperProps) {
 // Success Screen
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface SuccessScreenProps {
+function SuccessScreen({
+  data,
+  onReset,
+}: {
   data: OnboardingFormData;
   onReset: () => void;
-}
-
-export function SuccessScreen({ data, onReset }: SuccessScreenProps) {
-  const selectedFeatures = FEATURES.filter((f) => data.features.includes(f.id));
+}) {
   const selectedCategory = WEBSITE_CATEGORIES.find((c) => c.value === data.websiteCategory);
-  const selectedBudget = BUDGET_TIERS.find((b) => b.value === data.budgetTier);
   const selectedTimeline = TIMELINE_OPTIONS.find((t) => t.value === data.launchTimeline);
 
-  const whatsappMessage = encodeURIComponent(
-    `Hi! I just submitted a website onboarding form. Here's a quick summary:\n\n` +
-    `👤 *Name:* ${data.fullName}\n` +
-    `🏢 *Company:* ${data.companyName}\n` +
-    `📧 *Email:* ${data.email}\n` +
-    `📱 *Phone:* ${data.phone}\n\n` +
-    `🌐 *Website Type:* ${selectedCategory?.label ?? data.websiteCategory}\n` +
-    `📄 *Pages:* ${data.estimatedPages}\n` +
-    `⚡ *Features:* ${selectedFeatures.map((f) => f.label).join(", ") || "None selected"}\n\n` +
-    `💰 *Budget:* ${selectedBudget?.range ?? data.budgetTier}\n` +
-    `⏱️ *Timeline:* ${selectedTimeline?.label ?? data.launchTimeline} (${selectedTimeline?.sublabel ?? ""})\n\n` +
-    `📝 *Business:* ${data.businessOverview.slice(0, 150)}${data.businessOverview.length > 150 ? "..." : ""}\n\n` +
-    `Looking forward to your quote! 🚀`
-  );
+  const getWhatsAppMessage = () => {
+    const text = `*New Website Onboarding & Quote Request*
+• Client: ${data.fullName}
+• Company: ${data.companyName}
+• Email: ${data.email}
+• Phone: ${data.phone}
+• Category: ${data.websiteCategory === "other" ? data.websiteCategoryCustom : selectedCategory?.label}
+• Pages: ${data.estimatedPages === "custom" ? data.estimatedPagesCustom : data.estimatedPages}
+• Timeline: ${data.launchTimeline === "custom" ? data.launchTimelineCustom : selectedTimeline?.label}
+• Business Overview: ${data.businessOverview}`;
+    return encodeURIComponent(text);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-violet-50/20 dark:from-slate-950 dark:via-indigo-950/20 dark:to-violet-950/10 flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full">
-        {/* Success card */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden animate-float-in">
-          {/* Header gradient */}
-          <div className="bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 p-8 text-white text-center">
-            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 success-pulse">
-              <CheckCircle2 className="w-10 h-10 text-white" />
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold mb-2">
-              Quote Request Submitted! 🎉
-            </h2>
-            <p className="text-indigo-100 text-sm sm:text-base">
-              Thank you, <strong>{data.fullName}</strong>! We&apos;ve received your onboarding form and will review your requirements carefully.
-            </p>
+    <div className="max-w-xl mx-auto py-16 px-4 animate-fade-slide">
+      <div className="p-8 sm:p-10 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-center space-y-6">
+        <div className="w-12 h-12 rounded-full border border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 mx-auto flex items-center justify-center">
+          <Check className="w-6 h-6 stroke-[2.5]" />
+        </div>
+
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+            Intake Received
+          </h2>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-md mx-auto leading-relaxed">
+            Thank you, <span className="font-medium text-neutral-900 dark:text-neutral-100">{data.fullName}</span>. We have received the project specifications for <span className="font-medium text-neutral-900 dark:text-neutral-100">{data.companyName}</span> and will prepare your tailored quote within 24–48 hours.
+          </p>
+        </div>
+
+        <div className="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/60 text-left text-xs space-y-2">
+          <div className="flex justify-between">
+            <span className="text-neutral-500">Contact Email:</span>
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">{data.email}</span>
           </div>
-
-          {/* Body */}
-          <div className="p-6 sm:p-8 space-y-6">
-            {/* What's next */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                What Happens Next
-              </h3>
-              <div className="space-y-2">
-                {[
-                  { icon: "📧", text: `A confirmation has been sent to ${data.email}` },
-                  { icon: "🔍", text: "We will review your project requirements in detail" },
-                  { icon: "💬", text: "Expect a detailed, itemized quote within 24–48 business hours" },
-                  { icon: "🤝", text: "We'll schedule a brief call if needed to clarify any details" },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                    <span className="text-lg flex-shrink-0">{item.icon}</span>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">{item.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Submission summary */}
-            <div className="bg-gradient-to-br from-indigo-50 to-violet-50/50 dark:from-indigo-900/20 dark:to-violet-900/10 rounded-2xl p-5 border border-indigo-100 dark:border-indigo-800/50 space-y-3">
-              <h3 className="text-sm font-bold text-indigo-700 dark:text-indigo-300">
-                Your Submission Summary
-              </h3>
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div>
-                  <p className="text-slate-500 dark:text-slate-400">Website Type</p>
-                  <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
-                    {selectedCategory?.icon} {selectedCategory?.label}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-slate-500 dark:text-slate-400">Budget Range</p>
-                  <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
-                    {selectedBudget?.icon} {selectedBudget?.range}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-slate-500 dark:text-slate-400">Timeline</p>
-                  <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
-                    {selectedTimeline?.icon} {selectedTimeline?.label} ({selectedTimeline?.sublabel})
-                  </p>
-                </div>
-                <div>
-                  <p className="text-slate-500 dark:text-slate-400">Features Selected</p>
-                  <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
-                    {selectedFeatures.length > 0 ? `${selectedFeatures.length} feature${selectedFeatures.length > 1 ? "s" : ""}` : "Basic site"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <a
-                href={`https://wa.me/?text=${whatsappMessage}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 px-5 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg shadow-emerald-200 dark:shadow-emerald-900/50 text-sm"
-              >
-                <MessageCircle className="w-5 h-5" />
-                Send Summary via WhatsApp
-              </a>
-              <button
-                type="button"
-                onClick={onReset}
-                className="flex items-center justify-center gap-2 px-5 py-3.5 border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-xl hover:border-indigo-300 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-200 text-sm"
-              >
-                Submit Another Form
-              </button>
-            </div>
+          <div className="flex justify-between">
+            <span className="text-neutral-500">Scope Type:</span>
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+              {data.websiteCategory === "other" ? data.websiteCategoryCustom : selectedCategory?.label}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-neutral-500">Target Timeline:</span>
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+              {data.launchTimeline === "custom" ? data.launchTimelineCustom : selectedTimeline?.label}
+            </span>
           </div>
         </div>
 
-        {/* Footer note */}
-        <p className="text-center text-xs text-slate-400 dark:text-slate-500 mt-6">
-          Having trouble? Email us directly at{" "}
-          <a href="mailto:hello@yourdesign.com" className="text-indigo-500 hover:underline">
-            hello@yourdesign.com
+        <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
+          <a
+            href={`https://wa.me/?text=${getWhatsAppMessage()}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100 transition-colors"
+          >
+            <MessageSquare className="w-4 h-4" />
+            Send Summary via WhatsApp
           </a>
-        </p>
+
+          <button
+            type="button"
+            onClick={onReset}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Submit Another Request
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Validation
+// Main Onboarding Form Component
 // ─────────────────────────────────────────────────────────────────────────────
-
-export function validateSection(section: number, data: OnboardingFormData): Partial<Record<keyof OnboardingFormData, string>> {
-  const errors: Partial<Record<keyof OnboardingFormData, string>> = {};
-
-  if (section === 1) {
-    if (!data.fullName.trim()) errors.fullName = "Please enter your full name";
-    if (!data.companyName.trim()) errors.companyName = "Please enter your company or brand name";
-    if (!data.email.trim()) {
-      errors.email = "Email address is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      errors.email = "Please enter a valid email address";
-    }
-    if (!data.phone.trim()) errors.phone = "Phone/WhatsApp number is required";
-    if (!data.businessOverview.trim()) {
-      errors.businessOverview = "Please describe your business and goals";
-    } else if (data.businessOverview.trim().length < 30) {
-      errors.businessOverview = "Please provide at least 30 characters to help us understand your needs";
-    }
-  }
-
-  if (section === 2) {
-    if (!data.websiteCategory) errors.websiteCategory = "Please select a website category";
-    if (!data.estimatedPages) errors.estimatedPages = "Please select the estimated number of pages";
-  }
-
-  if (section === 3) {
-    const assetFields = ["brandLogo", "websiteCopy", "photos", "domainName", "webHosting"] as const;
-    for (const field of assetFields) {
-      if (!data[field]) {
-        errors[field] = "Please make a selection";
-      }
-    }
-  }
-
-  if (section === 4) {
-    if (!data.launchTimeline) errors.launchTimeline = "Please select your expected timeline";
-    if (!data.budgetTier) errors.budgetTier = "Please select a budget tier";
-  }
-
-  if (section === 5) {
-    if (!data.agreedToRevisionTerms) {
-      errors.agreedToRevisionTerms = "You must agree to the revision and payment terms";
-    }
-    if (!data.agreedToLiabilityTerms) {
-      errors.agreedToLiabilityTerms = "You must agree to the liability limitation terms";
-    }
-  }
-
-  return errors;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Main Multi-Step Form
-// ─────────────────────────────────────────────────────────────────────────────
-
-type SubmitStatus = "idle" | "loading" | "success" | "error";
 
 export default function OnboardingForm() {
-  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<OnboardingFormData>(DEFAULT_FORM_DATA);
-  const [errors, setErrors] = useState<Partial<Record<keyof OnboardingFormData, string>>>({});
-  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>("idle");
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [currentYear, setCurrentYear] = useState<number>(2026);
+  const [themeMode, setThemeMode] = useState<"system" | "light" | "dark">("system");
+
   const totalSteps = 5;
 
+  // Handle system theme / toggle
   useEffect(() => {
-    setCurrentYear(new Date().getFullYear());
-  }, []);
+    const root = document.documentElement;
+    if (themeMode === "dark") {
+      root.classList.add("dark");
+    } else if (themeMode === "light") {
+      root.classList.remove("dark");
+    } else {
+      // Follow system
+      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (isDark) root.classList.add("dark");
+      else root.classList.remove("dark");
+    }
+  }, [themeMode]);
 
   const handleChange = (
     field: keyof OnboardingFormData,
     value: string | boolean | string[]
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error on change
     if (errors[field]) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -1058,122 +917,145 @@ export default function OnboardingForm() {
     }
   };
 
-  const goNext = () => {
-    const sectionErrors = validateSection(currentStep, formData);
-    if (Object.keys(sectionErrors).length > 0) {
-      setErrors(sectionErrors);
-      // Scroll to first error
-      setTimeout(() => {
-        const firstError = document.querySelector("[data-error]");
-        firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 100);
-      return;
+  const validateStep = (step: number): boolean => {
+    const newErrors: Partial<Record<string, string>> = {};
+
+    if (step === 1) {
+      if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
+      if (!formData.companyName.trim()) newErrors.companyName = "Company or brand name is required";
+      if (!formData.email.trim()) {
+        newErrors.email = "Email address is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        newErrors.email = "Please enter a valid email address";
+      }
+      if (!formData.phone.trim()) newErrors.phone = "Phone or WhatsApp number is required";
+      if (!formData.businessOverview.trim()) {
+        newErrors.businessOverview = "Please provide a brief business and website overview";
+      }
     }
-    setErrors({});
-    setCurrentStep((s) => Math.min(s + 1, totalSteps));
+
+    if (step === 2) {
+      if (!formData.websiteCategory) {
+        newErrors.websiteCategory = "Please select a website category";
+      } else if (formData.websiteCategory === "other" && !formData.websiteCategoryCustom?.trim()) {
+        newErrors.websiteCategoryCustom = "Please describe your custom website scope";
+      }
+
+      if (!formData.estimatedPages) {
+        newErrors.estimatedPages = "Please select an estimated page count";
+      } else if (formData.estimatedPages === "custom" && !formData.estimatedPagesCustom?.trim()) {
+        newErrors.estimatedPagesCustom = "Please describe your estimated page count";
+      }
+    }
+
+    if (step === 3) {
+      ASSET_ITEMS.forEach((item) => {
+        if (!formData[item.id]) {
+          newErrors[item.id] = "Please make a selection";
+        }
+      });
+    }
+
+    if (step === 4) {
+      if (!formData.launchTimeline) {
+        newErrors.launchTimeline = "Please select a target timeline";
+      } else if (formData.launchTimeline === "custom" && !formData.launchTimelineCustom?.trim()) {
+        newErrors.launchTimelineCustom = "Please specify your target launch deadline";
+      }
+    }
+
+    if (step === 5) {
+      if (!formData.agreedToRevisionTerms) {
+        newErrors.agreedToRevisionTerms = "You must accept the revision and milestone deposit agreement";
+      }
+      if (!formData.agreedToLiabilityTerms) {
+        newErrors.agreedToLiabilityTerms = "You must accept the third-party costs and liability terms";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleBack = () => {
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const goBack = () => {
-    setErrors({});
-    setCurrentStep((s) => Math.max(s - 1, 1));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const jumpToStep = (step: number) => {
+    // Allow jumping to steps already visited or validated
+    if (step < currentStep || validateStep(currentStep)) {
+      setCurrentStep(step);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
-  const buildEmailMessage = (): string => {
-    const selectedFeatures = FEATURES.filter((f) => formData.features.includes(f.id));
+  const buildEmailSummary = () => {
     const selectedCategory = WEBSITE_CATEGORIES.find((c) => c.value === formData.websiteCategory);
-    const selectedBudget = BUDGET_TIERS.find((b) => b.value === formData.budgetTier);
     const selectedTimeline = TIMELINE_OPTIONS.find((t) => t.value === formData.launchTimeline);
+    const selectedFeatures = FEATURES.filter((f) => formData.features.includes(f.id));
+
     const assetSummary = ASSET_ITEMS.map((item) => {
-      const val = formData[item.id as keyof OnboardingFormData] as string;
-      return `${item.icon} ${item.label}: ${val === "have" ? item.haveLabel : val === "need" ? item.needLabel : "Not specified"}`;
+      const val = formData[item.id] === "have" ? "READY (Client has it)" : "NEEDED (Designer to provide)";
+      return `• ${item.label}: ${val}`;
     }).join("\n");
 
     return `
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🌐 NEW WEBSITE ONBOARDING & QUOTE REQUEST
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NEW CLIENT WEBSITE ONBOARDING & QUOTE REQUEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-📋 SECTION 1: COMPANY & CONTACT DETAILS
-──────────────────────────────────────
+1. CLIENT & COMPANY DETAILS
 • Full Name: ${formData.fullName}
-• Company/Brand: ${formData.companyName}
+• Company / Brand: ${formData.companyName}
 • Email: ${formData.email}
-• Phone/WhatsApp: ${formData.phone}
+• Phone / WhatsApp: ${formData.phone}
 
 Business Overview:
 ${formData.businessOverview}
 
-📋 SECTION 2: WEBSITE TYPE & SCOPE
-──────────────────────────────────────
-• Website Category: ${selectedCategory?.label ?? formData.websiteCategory}
-• Estimated Pages: ${formData.estimatedPages}
-• Features Required:
-${selectedFeatures.length > 0 ? selectedFeatures.map((f) => `  ✓ ${f.label}`).join("\n") : "  • No special features selected (basic site)"}
+2. WEBSITE SCOPE
+• Category: ${formData.websiteCategory === "other" ? `Custom - ${formData.websiteCategoryCustom}` : selectedCategory?.label}
+• Pages: ${formData.estimatedPages === "custom" ? `Custom - ${formData.estimatedPagesCustom}` : `${formData.estimatedPages} Pages`}
+• Features Selected:
+${selectedFeatures.length > 0 ? selectedFeatures.map((f) => `  ✓ ${f.label}`).join("\n") : "  (None selected)"}
+${formData.customFeaturesText ? `• Custom Feature Notes: ${formData.customFeaturesText}` : ""}
 
-📋 SECTION 3: ASSET MATRIX
-──────────────────────────────────────
+3. ASSET READINESS MATRIX
 ${assetSummary}
+${formData.assetNotes ? `• Asset Notes: ${formData.assetNotes}` : ""}
 
-📋 SECTION 4: REFERENCES, TIMELINE & BUDGET
-──────────────────────────────────────
-• Reference/Inspiration URLs:
-${formData.referenceUrls || "None provided"}
+4. REFERENCES & TIMELINE
+• Reference Links: ${formData.referenceUrls || "None provided"}
+• Target Timeline: ${formData.launchTimeline === "custom" ? `Specific Deadline - ${formData.launchTimelineCustom}` : `${selectedTimeline?.label} (${selectedTimeline?.sublabel})`}
 
-• Launch Timeline: ${selectedTimeline?.label ?? formData.launchTimeline} (${selectedTimeline?.sublabel ?? ""})
-• Budget Tier: ${selectedBudget?.label ?? formData.budgetTier} — ${selectedBudget?.range ?? ""}
+5. WORKING TERMS ACKNOWLEDGED
+✓ 2 Rounds of Revisions & 50% Milestone Advance: AGREED
+✓ Third-Party Costs & Liability Cap: AGREED
 
-📋 SECTION 5: TERMS ACKNOWLEDGED
-──────────────────────────────────────
-✓ Design Revision & Payment Milestone Agreement: AGREED
-✓ Third-Party Costs & Liability Limitation Agreement: AGREED
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Submitted on: ${new Date().toLocaleString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZoneName: "short",
-    })}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    `.trim();
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Submitted at: ${new Date().toISOString()}
+`.trim();
   };
 
   const handleSubmit = async () => {
-    // Validate section 5 before submit
-    const sectionErrors = validateSection(5, formData);
-    if (Object.keys(sectionErrors).length > 0) {
-      setErrors(sectionErrors);
-      return;
-    }
+    if (!validateStep(5)) return;
 
     setSubmitStatus("loading");
 
-    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
-
-    if (!accessKey) {
-      // Fallback: open mailto link
-      const subject = encodeURIComponent(
-        `New Website Onboarding & Quote Request - ${formData.companyName}`
-      );
-      const body = encodeURIComponent(buildEmailMessage());
-      window.open(`mailto:?subject=${subject}&body=${body}`, "_blank");
-      setSubmitStatus("success");
-      return;
-    }
-
     try {
       const payload = {
-        access_key: accessKey,
+        access_key: WEB3FORMS_KEY,
         subject: `New Website Onboarding & Quote Request - ${formData.companyName}`,
         from_name: `${formData.fullName} (${formData.companyName})`,
         email: formData.email,
-        message: buildEmailMessage(),
-        // Honeypot
+        message: buildEmailSummary(),
         botcheck: "",
       };
 
@@ -1191,107 +1073,163 @@ Submitted on: ${new Date().toLocaleString("en-US", {
       if (response.ok && result.success) {
         setSubmitStatus("success");
       } else {
-        throw new Error(result.message ?? "Submission failed. Please try again.");
+        throw new Error(result.message || "Failed to submit form.");
       }
-    } catch (error) {
-      console.error("Form submission error:", error);
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred. Please try again or use the WhatsApp fallback."
-      );
-      setSubmitStatus("error");
+    } catch (err) {
+      console.error("Submission error:", err);
+      // If network fails, provide mailto fallback automatically
+      const mailtoSubject = encodeURIComponent(`New Website Onboarding - ${formData.companyName}`);
+      const mailtoBody = encodeURIComponent(buildEmailSummary());
+      window.open(`mailto:?subject=${mailtoSubject}&body=${mailtoBody}`, "_blank");
+      setSubmitStatus("success");
     }
   };
 
-  const handleReset = () => {
-    setFormData(DEFAULT_FORM_DATA);
-    setCurrentStep(1);
-    setSubmitStatus("idle");
-    setErrors({});
-    setErrorMessage("");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   if (submitStatus === "success") {
-    return <SuccessScreen data={formData} onReset={handleReset} />;
+    return (
+      <SuccessScreen
+        data={formData}
+        onReset={() => {
+          setFormData(DEFAULT_FORM_DATA);
+          setCurrentStep(1);
+          setSubmitStatus("idle");
+          setErrors({});
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+      />
+    );
   }
 
-  const currentSection = SECTION_META[currentStep - 1];
+  const currentMeta = SECTION_META[currentStep - 1];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-violet-50/20 dark:from-slate-950 dark:via-indigo-950/20 dark:to-violet-950/10">
-      {/* Hero Header */}
-      <header className="relative bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2 blur-3xl" />
-        </div>
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
-              <Globe className="w-3.5 h-3.5" />
-              <span className="text-xs font-medium">Professional Web Design</span>
+    <div className="min-h-screen flex flex-col justify-between">
+      {/* Minimal Top Header */}
+      <header className="border-b border-neutral-200/80 dark:border-neutral-800/80 bg-white/70 dark:bg-neutral-950/70 backdrop-blur-md sticky top-0 z-30">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg border border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 flex items-center justify-center font-bold text-xs">
+              O
             </div>
+            <span className="text-sm font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
+              Client Onboarding
+            </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
-            Website Onboarding &<br className="hidden sm:block" />{" "}
-            <span className="text-indigo-200">Quote Request</span>
-          </h1>
-          <p className="text-indigo-100 text-base sm:text-lg max-w-2xl leading-relaxed">
-            Complete this form so we can understand your vision and deliver an accurate, detailed quote — no generic pricing, just a proposal tailored to your exact needs.
-          </p>
-          {/* Stats row */}
-          <div className="flex flex-wrap gap-4 mt-6">
-            {[
-              { icon: "⏱️", label: "~5 min to complete" },
-              { icon: "🔒", label: "Your data is private" },
-              { icon: "💬", label: "Quote in 24–48 hrs" },
-            ].map((stat) => (
-              <div key={stat.label} className="flex items-center gap-1.5 text-xs text-indigo-200">
-                <span>{stat.icon}</span>
-                <span>{stat.label}</span>
-              </div>
-            ))}
+
+          <div className="flex items-center gap-3">
+            {/* Step indicator */}
+            <span className="text-xs font-mono text-neutral-500 dark:text-neutral-400">
+              {currentStep} / {totalSteps}
+            </span>
+
+            {/* Theme toggle */}
+            <button
+              type="button"
+              onClick={() => {
+                if (themeMode === "system") setThemeMode("light");
+                else if (themeMode === "light") setThemeMode("dark");
+                else setThemeMode("system");
+              }}
+              title={`Theme: ${themeMode} (click to toggle)`}
+              className="w-8 h-8 rounded-lg border border-neutral-200 dark:border-neutral-800 flex items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+            >
+              {themeMode === "light" && <Sun className="w-3.5 h-3.5" />}
+              {themeMode === "dark" && <Moon className="w-3.5 h-3.5" />}
+              {themeMode === "system" && <Laptop className="w-3.5 h-3.5" />}
+            </button>
           </div>
         </div>
       </header>
 
-      {/* Form container */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Stepper */}
-        <Stepper currentStep={currentStep} totalSteps={totalSteps} />
+      {/* Main Content Area */}
+      <main className="max-w-3xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex-1">
+        {/* Intro */}
+        <div className="mb-8 space-y-1.5">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+            Website Project Onboarding
+          </h1>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
+            Please complete this intake form so we can evaluate your project scope and provide an accurate proposal tailored to your business needs.
+          </p>
+        </div>
 
-        {/* Form card */}
-        <div
-          key={currentStep}
-          className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden animate-slide-up"
-        >
-          {/* Section header */}
-          <div className={cn(
-            "bg-gradient-to-r p-6 sm:p-8 text-white",
-            currentSection.color
-          )}>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-2xl flex-shrink-0">
-                {currentSection.icon}
-              </div>
+        {/* Minimal Clickable Stepper */}
+        <div className="mb-8">
+          <div className="grid grid-cols-5 gap-2">
+            {SECTION_META.map((meta) => {
+              const isActive = meta.id === currentStep;
+              const isPassed = meta.id < currentStep;
+
+              return (
+                <button
+                  key={meta.id}
+                  type="button"
+                  onClick={() => jumpToStep(meta.id)}
+                  className="flex flex-col gap-1 text-left group transition-all"
+                >
+                  <div
+                    className={cn(
+                      "h-1 rounded-full transition-all duration-200",
+                      isActive
+                        ? "bg-neutral-900 dark:bg-white"
+                        : isPassed
+                        ? "bg-neutral-400 dark:bg-neutral-600"
+                        : "bg-neutral-200 dark:bg-neutral-800"
+                    )}
+                  />
+                  <div className="hidden sm:flex items-center justify-between pt-0.5">
+                    <span
+                      className={cn(
+                        "text-[11px] font-medium transition-colors",
+                        isActive
+                          ? "text-neutral-900 dark:text-neutral-100 font-semibold"
+                          : isPassed
+                          ? "text-neutral-600 dark:text-neutral-400"
+                          : "text-neutral-400 dark:text-neutral-600"
+                      )}
+                    >
+                      {meta.stepLabel}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Form Card */}
+        <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 sm:p-8 shadow-sm">
+          {/* Card Header */}
+          <div className="border-b border-neutral-100 dark:border-neutral-800 pb-5 mb-6">
+            <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs font-semibold text-white/70 uppercase tracking-wide mb-0.5">
-                  Step {currentStep} of {totalSteps}
-                </div>
-                <h2 className="text-xl sm:text-2xl font-extrabold">
-                  {currentSection.title}
+                <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+                  Step 0{currentStep} / 0{totalSteps}
+                </span>
+                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mt-0.5">
+                  {currentMeta.title}
                 </h2>
-                <p className="text-white/80 text-sm mt-0.5">
-                  {currentSection.description}
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                  {currentMeta.subtitle}
                 </p>
               </div>
+
+              {/* Back button at top if on step > 1 */}
+              {currentStep > 1 && (
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 flex items-center gap-1 transition-colors"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                  <span>Back</span>
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Section body */}
-          <div className="p-6 sm:p-8">
+          {/* Step Body */}
+          <div className="animate-fade-slide min-h-[320px]">
             {currentStep === 1 && (
               <Section1 data={formData} onChange={handleChange} errors={errors} />
             )}
@@ -1307,55 +1245,31 @@ Submitted on: ${new Date().toLocaleString("en-US", {
             {currentStep === 5 && (
               <Section5 data={formData} onChange={handleChange} errors={errors} />
             )}
-
-            {/* Error banner for submission errors */}
-            {submitStatus === "error" && (
-              <div className="mt-6 flex items-start gap-3 p-4 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-xl">
-                <AlertCircle className="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-semibold text-rose-700 dark:text-rose-300">
-                    Submission Failed
-                  </p>
-                  <p className="text-xs text-rose-600 dark:text-rose-400 mt-0.5">
-                    {errorMessage}
-                  </p>
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* Navigation footer */}
-          <div className="px-6 sm:px-8 pb-6 sm:pb-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100 dark:border-slate-800 pt-6">
-            <button
-              type="button"
-              onClick={goBack}
-              disabled={currentStep === 1}
-              className={cn(
-                "flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200 w-full sm:w-auto justify-center",
-                currentStep === 1
-                  ? "opacity-0 pointer-events-none"
-                  : "border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-indigo-300 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400"
-              )}
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Back
-            </button>
-
-            <div className="text-xs text-slate-400 dark:text-slate-500 hidden sm:block">
-              {currentStep < totalSteps ? (
-                <span>All fields marked <span className="text-rose-400">*</span> are required</span>
-              ) : (
-                <span>Review your information before submitting</span>
-              )}
-            </div>
+          {/* Action Bar / Navigation Buttons */}
+          <div className="border-t border-neutral-100 dark:border-neutral-800 pt-6 mt-8 flex items-center justify-between gap-3">
+            {/* Dedicated Back Button */}
+            {currentStep > 1 ? (
+              <button
+                type="button"
+                onClick={handleBack}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 text-sm font-medium transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+            ) : (
+              <div /> // Spacer
+            )}
 
             {currentStep < totalSteps ? (
               <button
                 type="button"
-                onClick={goNext}
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg shadow-indigo-200 dark:shadow-indigo-900/50 text-sm w-full sm:w-auto justify-center"
+                onClick={handleNext}
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-semibold hover:opacity-90 transition-opacity ml-auto"
               >
-                Continue
+                <span>Continue</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
@@ -1364,38 +1278,34 @@ Submitted on: ${new Date().toLocaleString("en-US", {
                 onClick={handleSubmit}
                 disabled={submitStatus === "loading"}
                 className={cn(
-                  "flex items-center gap-2 px-8 py-3.5 font-bold rounded-xl transition-all duration-200 shadow-lg text-sm w-full sm:w-auto justify-center",
+                  "inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-opacity ml-auto",
                   submitStatus === "loading"
-                    ? "bg-slate-400 cursor-not-allowed text-white"
-                    : "bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-emerald-200 dark:shadow-emerald-900/50 hover:shadow-xl"
+                    ? "bg-neutral-400 dark:bg-neutral-600 text-white cursor-not-allowed"
+                    : "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:opacity-90"
                 )}
               >
                 {submitStatus === "loading" ? (
                   <>
                     <Loader2 className="w-4 h-4 spinner" />
-                    Submitting...
+                    <span>Submitting...</span>
                   </>
                 ) : (
                   <>
                     <Send className="w-4 h-4" />
-                    Submit Quote Request
+                    <span>Submit Quote Request</span>
                   </>
                 )}
               </button>
             )}
           </div>
         </div>
-
-        {/* Footer */}
-        <footer className="text-center mt-10 space-y-2">
-          <p className="text-xs text-slate-400 dark:text-slate-500">
-            Your information is private and will only be used to prepare your quote.
-          </p>
-          <p className="text-xs text-slate-400 dark:text-slate-500">
-            © {currentYear} Professional Web Design Services. All rights reserved.
-          </p>
-        </footer>
       </main>
+
+      {/* Minimal Footer */}
+      <footer className="border-t border-neutral-200/80 dark:border-neutral-800/80 py-6 text-center text-xs text-neutral-400 dark:text-neutral-500 space-y-1">
+        <p>All client submissions are confidential and encrypted in transit.</p>
+        <p>© {new Date().getFullYear()} Professional Web Design & Development Services.</p>
+      </footer>
     </div>
   );
 }

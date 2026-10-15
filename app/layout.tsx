@@ -2,20 +2,20 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Client Onboarding & Quote Request | Web Design Services",
+  title: "Client Onboarding & Project Scope | Web Design & Development",
   description:
-    "Fill out this interactive onboarding form to help us understand your website project needs. We'll provide an accurate custom quote tailored to your business.",
+    "Interactive website onboarding and scope intake form to evaluate your project needs and prepare an accurate custom quote.",
   keywords: [
-    "web design",
-    "website quote",
     "client onboarding",
-    "website development",
+    "website scope",
+    "web design quote",
+    "project intake",
     "freelance web designer",
   ],
   openGraph: {
-    title: "Client Website Onboarding & Quote Request",
+    title: "Client Onboarding & Project Scope",
     description:
-      "Tell us about your project and get an accurate custom quote for your website.",
+      "Interactive website onboarding and scope intake form to evaluate your project needs and prepare an accurate custom quote.",
     type: "website",
   },
   robots: {
@@ -27,7 +27,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#4f46e5",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbfbfb" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+  ],
 };
 
 export default function RootLayout({
@@ -45,11 +48,13 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen antialiased">{children}</body>
+      <body className="min-h-screen bg-[var(--background)] text-[var(--foreground)] antialiased">
+        {children}
+      </body>
     </html>
   );
 }
