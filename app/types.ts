@@ -26,7 +26,7 @@ export interface OnboardingFormData {
   webHosting: string;
   assetNotes?: string;
 
-  // Section 4: References & Timeline (Budget Tier removed as requested)
+  // Section 4: References & Timeline
   referenceUrls: string;
   launchTimeline: string;
   launchTimelineCustom?: string;

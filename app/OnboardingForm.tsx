@@ -13,11 +13,6 @@ import {
   Send,
   MessageSquare,
   Globe,
-  Clock,
-  Shield,
-  Layers,
-  FileCheck2,
-  ArrowRight,
   RotateCcw,
   Sun,
   Moon,
@@ -68,30 +63,30 @@ function InputField({
       <div className="flex items-center justify-between">
         <label
           htmlFor={id}
-          className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400"
+          className="text-xs font-medium uppercase tracking-wider text-stone-600 dark:text-stone-400"
         >
           {label}
-          {required && <span className="text-neutral-900 dark:text-neutral-100 ml-1 font-bold">*</span>}
+          {required && <span className="text-orange-600 dark:text-orange-500 ml-1 font-bold">*</span>}
         </label>
-        {hint && <span className="text-xs text-neutral-400 dark:text-neutral-500">{hint}</span>}
+        {hint && <span className="text-xs text-stone-400 dark:text-stone-500">{hint}</span>}
       </div>
       <div className="relative">
         {Icon && (
-          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 pointer-events-none">
+          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 dark:text-stone-500 pointer-events-none">
             <Icon className="w-4 h-4" />
           </div>
         )}
         <input
           id={id}
           className={cn(
-            "w-full rounded-xl border bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100",
-            "py-2.5 pr-3.5 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-500",
-            "focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-100 focus:border-neutral-900 dark:focus:border-neutral-100",
+            "w-full rounded-xl border bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100",
+            "py-2.5 pr-3.5 text-sm placeholder:text-stone-400 dark:placeholder:text-stone-500",
+            "focus:outline-none focus:ring-1 focus:ring-orange-600 dark:focus:ring-orange-500 focus:border-orange-600 dark:focus:border-orange-500",
             "transition-all duration-150",
             Icon ? "pl-10" : "pl-3.5",
             error
               ? "border-red-500 dark:border-red-500 focus:ring-red-500"
-              : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700"
+              : "border-stone-200 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700"
           )}
           {...props}
         />
@@ -122,23 +117,23 @@ function TextareaField({
       <div className="flex items-center justify-between">
         <label
           htmlFor={id}
-          className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400"
+          className="text-xs font-medium uppercase tracking-wider text-stone-600 dark:text-stone-400"
         >
           {label}
-          {required && <span className="text-neutral-900 dark:text-neutral-100 ml-1 font-bold">*</span>}
+          {required && <span className="text-orange-600 dark:text-orange-500 ml-1 font-bold">*</span>}
         </label>
-        {hint && <span className="text-xs text-neutral-400 dark:text-neutral-500">{hint}</span>}
+        {hint && <span className="text-xs text-stone-400 dark:text-stone-500">{hint}</span>}
       </div>
       <textarea
         id={id}
         className={cn(
-          "w-full rounded-xl border bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100",
-          "p-3 text-sm placeholder:text-neutral-400 dark:placeholder:text-neutral-500",
-          "focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-100 focus:border-neutral-900 dark:focus:border-neutral-100",
+          "w-full rounded-xl border bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100",
+          "p-3 text-sm placeholder:text-stone-400 dark:placeholder:text-stone-500",
+          "focus:outline-none focus:ring-1 focus:ring-orange-600 dark:focus:ring-orange-500 focus:border-orange-600 dark:focus:border-orange-500",
           "transition-all duration-150 resize-y min-h-[90px]",
           error
             ? "border-red-500 dark:border-red-500 focus:ring-red-500"
-            : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700"
+            : "border-stone-200 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700"
         )}
         {...props}
       />
@@ -166,10 +161,10 @@ function Section1({ data, onChange, errors }: SectionProps) {
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <InputField
-          label="Full Name"
+          label="Your Full Name"
           id="fullName"
           icon={User}
-          placeholder="e.g. Jane Smith"
+          placeholder="Sarah Jenkins"
           value={data.fullName}
           onChange={(e) => onChange("fullName", e.target.value)}
           error={errors.fullName}
@@ -177,10 +172,10 @@ function Section1({ data, onChange, errors }: SectionProps) {
           autoComplete="name"
         />
         <InputField
-          label="Company / Brand Name"
+          label="Company, Brand, or Studio Name"
           id="companyName"
           icon={Building2}
-          placeholder="e.g. Acme Studio"
+          placeholder="Kanso Coffee Roasters"
           value={data.companyName}
           onChange={(e) => onChange("companyName", e.target.value)}
           error={errors.companyName}
@@ -194,7 +189,7 @@ function Section1({ data, onChange, errors }: SectionProps) {
           label="Email Address"
           id="email"
           icon={Mail}
-          placeholder="jane@company.com"
+          placeholder="sarah@kansocoffee.com"
           value={data.email}
           onChange={(e) => onChange("email", e.target.value)}
           error={errors.email}
@@ -206,7 +201,7 @@ function Section1({ data, onChange, errors }: SectionProps) {
           label="Phone / WhatsApp Number"
           id="phone"
           icon={Phone}
-          placeholder="+1 (555) 000-0000"
+          placeholder="+1 (415) 890-2341 (include country code)"
           value={data.phone}
           onChange={(e) => onChange("phone", e.target.value)}
           error={errors.phone}
@@ -219,12 +214,13 @@ function Section1({ data, onChange, errors }: SectionProps) {
       <TextareaField
         label="Business Overview & Website Goals"
         id="businessOverview"
-        placeholder="Briefly describe what your business does, who your target audience is, and the primary objective of this new website (e.g., generate sales leads, showcase work, sell physical products, establish authority)..."
+        placeholder="We are an independent specialty coffee roastery launching a wholesale B2B portal and direct-to-consumer subscription shop. We need an inviting, fast website where café owners can easily request wholesale sample boxes, and retail customers can order fresh weekly bags."
         value={data.businessOverview}
         onChange={(e) => onChange("businessOverview", e.target.value)}
         error={errors.businessOverview}
         required
         rows={4}
+        hint="What do you do, who are your customers, and what does success look like for this website?"
       />
     </div>
   );
@@ -255,10 +251,10 @@ function Section2({ data, onChange, errors }: SectionProps) {
       {/* Category Selection */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
-            Website Category <span className="text-neutral-900 dark:text-neutral-100 font-bold">*</span>
+          <label className="text-xs font-medium uppercase tracking-wider text-stone-600 dark:text-stone-400">
+            Website Category <span className="text-orange-600 dark:text-orange-500 font-bold">*</span>
           </label>
-          <span className="text-xs text-neutral-400 dark:text-neutral-500">Select one</span>
+          <span className="text-xs text-stone-400 dark:text-stone-500">Select the closest match</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -272,26 +268,26 @@ function Section2({ data, onChange, errors }: SectionProps) {
                 className={cn(
                   "p-3.5 rounded-xl border text-left flex flex-col justify-between transition-all duration-150",
                   isSelected
-                    ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800/60 ring-1 ring-neutral-900 dark:ring-white"
-                    : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900"
+                    ? "border-orange-600 dark:border-orange-500 bg-orange-50/60 dark:bg-orange-950/20 ring-1 ring-orange-600 dark:ring-orange-500"
+                    : "border-stone-200 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700 bg-white dark:bg-stone-900"
                 )}
               >
                 <div className="flex items-start justify-between gap-2">
-                  <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                  <span className="text-sm font-medium text-stone-900 dark:text-stone-100">
                     {cat.label}
                   </span>
                   <div
                     className={cn(
                       "w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 mt-0.5",
                       isSelected
-                        ? "border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900"
-                        : "border-neutral-300 dark:border-neutral-700"
+                        ? "border-orange-600 dark:border-orange-500 bg-orange-600 dark:bg-orange-500 text-white"
+                        : "border-stone-300 dark:border-stone-700"
                     )}
                   >
-                    {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white dark:bg-neutral-900" />}
+                    {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                   </div>
                 </div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">
+                <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 leading-relaxed">
                   {cat.description}
                 </p>
               </button>
@@ -305,7 +301,7 @@ function Section2({ data, onChange, errors }: SectionProps) {
             <InputField
               label="Describe Your Custom Website Scope"
               id="websiteCategoryCustom"
-              placeholder="e.g. A client portal with real-time analytics and document signing"
+              placeholder="e.g. A private membership library with curated architectural resources and member login"
               value={data.websiteCategoryCustom ?? ""}
               onChange={(e) => onChange("websiteCategoryCustom", e.target.value)}
               error={errors.websiteCategoryCustom}
@@ -321,10 +317,10 @@ function Section2({ data, onChange, errors }: SectionProps) {
       {/* Estimated Pages */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
-            Estimated Number of Pages <span className="text-neutral-900 dark:text-neutral-100 font-bold">*</span>
+          <label className="text-xs font-medium uppercase tracking-wider text-stone-600 dark:text-stone-400">
+            Estimated Number of Pages <span className="text-orange-600 dark:text-orange-500 font-bold">*</span>
           </label>
-          <span className="text-xs text-neutral-400 dark:text-neutral-500">Estimate</span>
+          <span className="text-xs text-stone-400 dark:text-stone-500">Best estimate</span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -338,14 +334,14 @@ function Section2({ data, onChange, errors }: SectionProps) {
                 className={cn(
                   "p-3 rounded-xl border text-center transition-all duration-150",
                   isSelected
-                    ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800/60 ring-1 ring-neutral-900 dark:ring-white"
-                    : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900"
+                    ? "border-orange-600 dark:border-orange-500 bg-orange-50/60 dark:bg-orange-950/20 ring-1 ring-orange-600 dark:ring-orange-500"
+                    : "border-stone-200 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700 bg-white dark:bg-stone-900"
                 )}
               >
-                <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                <div className="text-sm font-semibold text-stone-900 dark:text-stone-100">
                   {opt.label}
                 </div>
-                <div className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5 truncate">
+                <div className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 truncate">
                   {opt.sublabel}
                 </div>
               </button>
@@ -357,9 +353,9 @@ function Section2({ data, onChange, errors }: SectionProps) {
         {isCustomPages && (
           <div className="pt-2 animate-fade-slide">
             <InputField
-              label="Describe Your Page Count or Architecture"
+              label="Describe Your Page Count or Structure"
               id="estimatedPagesCustom"
-              placeholder="e.g. 15 pages + dynamic blog posts and team member profiles"
+              placeholder="e.g. About 7 core pages, plus a dynamic case study index and an interactive team directory"
               value={data.estimatedPagesCustom ?? ""}
               onChange={(e) => onChange("estimatedPagesCustom", e.target.value)}
               error={errors.estimatedPagesCustom}
@@ -375,10 +371,10 @@ function Section2({ data, onChange, errors }: SectionProps) {
       {/* Features Checkboxes */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
+          <label className="text-xs font-medium uppercase tracking-wider text-stone-600 dark:text-stone-400">
             Key Features & Integrations
           </label>
-          <span className="text-xs text-neutral-400 dark:text-neutral-500">Optional</span>
+          <span className="text-xs text-stone-400 dark:text-stone-500">Select any needed</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -392,25 +388,25 @@ function Section2({ data, onChange, errors }: SectionProps) {
                 className={cn(
                   "p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all duration-150",
                   isChecked
-                    ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800/60"
-                    : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900"
+                    ? "border-orange-600 dark:border-orange-500 bg-orange-50/60 dark:bg-orange-950/20"
+                    : "border-stone-200 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700 bg-white dark:bg-stone-900"
                 )}
               >
                 <div
                   className={cn(
                     "w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors",
                     isChecked
-                      ? "border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900"
-                      : "border-neutral-300 dark:border-neutral-700"
+                      ? "border-orange-600 dark:border-orange-500 bg-orange-600 dark:bg-orange-500 text-white"
+                      : "border-stone-300 dark:border-stone-700"
                   )}
                 >
                   {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                  <div className="text-sm font-medium text-stone-900 dark:text-stone-100">
                     {feature.label}
                   </div>
-                  <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 leading-relaxed">
+                  <div className="text-xs text-stone-500 dark:text-stone-400 mt-0.5 leading-relaxed">
                     {feature.description}
                   </div>
                 </div>
@@ -425,7 +421,7 @@ function Section2({ data, onChange, errors }: SectionProps) {
             <TextareaField
               label="Describe Custom Features or Integrations"
               id="customFeaturesText"
-              placeholder="e.g. HubSpot CRM sync, custom quotation calculator, customer login area, multi-language switcher..."
+              placeholder="e.g. Automated Google Calendar booking for 30-min tastings, custom wholesale order questionnaire, and Mailchimp newsletter sync"
               value={data.customFeaturesText ?? ""}
               onChange={(e) => onChange("customFeaturesText", e.target.value)}
               rows={3}
@@ -445,11 +441,11 @@ function Section3({ data, onChange, errors }: SectionProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <p className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
-          Asset Readiness Matrix <span className="text-neutral-900 dark:text-neutral-100 font-bold">*</span>
+        <p className="text-xs font-medium uppercase tracking-wider text-stone-600 dark:text-stone-400">
+          Asset Readiness Matrix <span className="text-orange-600 dark:text-orange-500 font-bold">*</span>
         </p>
-        <p className="text-xs text-neutral-500 dark:text-neutral-400">
-          Let us know which assets you already have on hand and which you would like us to produce or configure.
+        <p className="text-xs text-stone-500 dark:text-stone-400">
+          Let us know what materials you have ready and what we should help produce or configure.
         </p>
       </div>
 
@@ -462,18 +458,18 @@ function Section3({ data, onChange, errors }: SectionProps) {
             <div
               key={item.id}
               className={cn(
-                "p-4 rounded-xl border bg-white dark:bg-neutral-900 transition-all",
+                "p-4 rounded-xl border bg-white dark:bg-stone-900 transition-all",
                 hasError
                   ? "border-red-400 dark:border-red-500"
-                  : "border-neutral-200 dark:border-neutral-800"
+                  : "border-stone-200 dark:border-stone-800"
               )}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="sm:max-w-[45%]">
-                  <h4 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                  <h4 className="text-sm font-medium text-stone-900 dark:text-stone-100">
                     {item.label}
                   </h4>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
                     {item.description}
                   </p>
                 </div>
@@ -485,8 +481,8 @@ function Section3({ data, onChange, errors }: SectionProps) {
                     className={cn(
                       "px-3 py-2 text-xs font-medium rounded-lg border text-center transition-all",
                       value === "have"
-                        ? "border-neutral-900 dark:border-white bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 font-semibold"
-                        : "border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:border-neutral-300 dark:hover:border-neutral-700"
+                        ? "border-orange-600 dark:border-orange-500 bg-orange-600 text-white font-semibold"
+                        : "border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-400 hover:border-stone-300 dark:hover:border-stone-700"
                     )}
                   >
                     {item.haveLabel}
@@ -498,8 +494,8 @@ function Section3({ data, onChange, errors }: SectionProps) {
                     className={cn(
                       "px-3 py-2 text-xs font-medium rounded-lg border text-center transition-all",
                       value === "need"
-                        ? "border-neutral-900 dark:border-white bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 font-semibold"
-                        : "border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:border-neutral-300 dark:hover:border-neutral-700"
+                        ? "border-orange-600 dark:border-orange-500 bg-orange-600 text-white font-semibold"
+                        : "border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-400 hover:border-stone-300 dark:hover:border-stone-700"
                     )}
                   >
                     {item.needLabel}
@@ -508,7 +504,7 @@ function Section3({ data, onChange, errors }: SectionProps) {
               </div>
               {hasError && (
                 <p className="text-xs text-red-600 dark:text-red-400 mt-2">
-                  Please select whether you have this asset or need it provided.
+                  Please select whether you have this ready or need it provided.
                 </p>
               )}
             </div>
@@ -519,7 +515,7 @@ function Section3({ data, onChange, errors }: SectionProps) {
       <TextareaField
         label="Additional Asset Notes (Optional)"
         id="assetNotes"
-        placeholder="e.g. Existing brand assets are hosted on Google Drive; domain is registered with Cloudflare..."
+        placeholder="e.g. Our vector SVG logos and brand guidelines (PDF) are in Dropbox. We did a product photoshoot last month and have 40+ high-res lifestyle images ready."
         value={data.assetNotes ?? ""}
         onChange={(e) => onChange("assetNotes", e.target.value)}
         rows={2}
@@ -529,7 +525,7 @@ function Section3({ data, onChange, errors }: SectionProps) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Section 4: References & Timeline (Budget Tier REMOVED)
+// Section 4: References & Timeline
 // ─────────────────────────────────────────────────────────────────────────────
 
 function Section4({ data, onChange, errors }: SectionProps) {
@@ -542,21 +538,21 @@ function Section4({ data, onChange, errors }: SectionProps) {
         <TextareaField
           label="Inspiration & Reference Websites"
           id="referenceUrls"
-          placeholder="Paste 1–3 website links you like and briefly describe what you like about them (e.g. 'stripe.com for typography, linear.app for interactions and simplicity')..."
+          placeholder={"1. aesop.com — We love their minimal typography and organic product layout.\n2. unioncraftbrewing.com — Great warm storytelling and clear wholesale inquiry funnel."}
           value={data.referenceUrls}
           onChange={(e) => onChange("referenceUrls", e.target.value)}
           rows={3}
-          hint="Optional but highly recommended"
+          hint="Paste 1–3 websites you admire and note what resonates with you"
         />
       </div>
 
       {/* Expected Timeline */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
-            Target Launch Timeline <span className="text-neutral-900 dark:text-neutral-100 font-bold">*</span>
+          <label className="text-xs font-medium uppercase tracking-wider text-stone-600 dark:text-stone-400">
+            Target Launch Timeline <span className="text-orange-600 dark:text-orange-500 font-bold">*</span>
           </label>
-          <span className="text-xs text-neutral-400 dark:text-neutral-500">Select one</span>
+          <span className="text-xs text-stone-400 dark:text-stone-500">Select one</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -570,20 +566,20 @@ function Section4({ data, onChange, errors }: SectionProps) {
                 className={cn(
                   "p-3.5 rounded-xl border text-left flex items-start justify-between transition-all duration-150",
                   isSelected
-                    ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800/60 ring-1 ring-neutral-900 dark:ring-white"
-                    : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900"
+                    ? "border-orange-600 dark:border-orange-500 bg-orange-50/60 dark:bg-orange-950/20 ring-1 ring-orange-600 dark:ring-orange-500"
+                    : "border-stone-200 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700 bg-white dark:bg-stone-900"
                 )}
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                    <span className="text-sm font-semibold text-stone-900 dark:text-stone-100">
                       {opt.label}
                     </span>
-                    <span className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">
+                    <span className="text-xs text-stone-500 dark:text-stone-400 font-normal">
                       ({opt.sublabel})
                     </span>
                   </div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">
+                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 leading-relaxed">
                     {opt.description}
                   </p>
                 </div>
@@ -591,11 +587,11 @@ function Section4({ data, onChange, errors }: SectionProps) {
                   className={cn(
                     "w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 mt-0.5",
                     isSelected
-                      ? "border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900"
-                      : "border-neutral-300 dark:border-neutral-700"
+                      ? "border-orange-600 dark:border-orange-500 bg-orange-600 dark:bg-orange-500 text-white"
+                      : "border-stone-300 dark:border-stone-700"
                   )}
                 >
-                  {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white dark:bg-neutral-900" />}
+                  {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                 </div>
               </button>
             );
@@ -608,7 +604,7 @@ function Section4({ data, onChange, errors }: SectionProps) {
             <InputField
               label="Specify Your Target Launch Date or Timeline"
               id="launchTimelineCustom"
-              placeholder="e.g. Must launch before product demo on November 15th"
+              placeholder="e.g. We need to go live before our annual trade conference on October 24th"
               value={data.launchTimelineCustom ?? ""}
               onChange={(e) => onChange("launchTimelineCustom", e.target.value)}
               error={errors.launchTimelineCustom}
@@ -636,42 +632,42 @@ function Section5({ data, onChange, errors }: SectionProps) {
   return (
     <div className="space-y-6">
       {/* Project Summary Card */}
-      <div className="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/40 space-y-3">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+      <div className="p-4 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/40 space-y-3">
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">
           Scope Summary
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
           <div>
-            <span className="text-neutral-500 dark:text-neutral-400">Client: </span>
-            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+            <span className="text-stone-500 dark:text-stone-400">Client: </span>
+            <span className="font-medium text-stone-900 dark:text-stone-100">
               {data.fullName || "—"} ({data.companyName || "—"})
             </span>
           </div>
           <div>
-            <span className="text-neutral-500 dark:text-neutral-400">Email: </span>
-            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+            <span className="text-stone-500 dark:text-stone-400">Email: </span>
+            <span className="font-medium text-stone-900 dark:text-stone-100">
               {data.email || "—"}
             </span>
           </div>
           <div>
-            <span className="text-neutral-500 dark:text-neutral-400">Website Type: </span>
-            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+            <span className="text-stone-500 dark:text-stone-400">Website Type: </span>
+            <span className="font-medium text-stone-900 dark:text-stone-100">
               {data.websiteCategory === "other"
                 ? `Custom: ${data.websiteCategoryCustom || "Not specified"}`
                 : selectedCategory?.label || "—"}
             </span>
           </div>
           <div>
-            <span className="text-neutral-500 dark:text-neutral-400">Estimated Pages: </span>
-            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+            <span className="text-stone-500 dark:text-stone-400">Estimated Pages: </span>
+            <span className="font-medium text-stone-900 dark:text-stone-100">
               {data.estimatedPages === "custom"
                 ? `Custom: ${data.estimatedPagesCustom || "Not specified"}`
                 : `${data.estimatedPages} Pages`}
             </span>
           </div>
           <div className="sm:col-span-2">
-            <span className="text-neutral-500 dark:text-neutral-400">Timeline: </span>
-            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+            <span className="text-stone-500 dark:text-stone-400">Timeline: </span>
+            <span className="font-medium text-stone-900 dark:text-stone-100">
               {data.launchTimeline === "custom"
                 ? `Custom Target: ${data.launchTimelineCustom || "Not specified"}`
                 : `${selectedTimeline?.label || "—"} (${selectedTimeline?.sublabel || ""})`}
@@ -679,8 +675,8 @@ function Section5({ data, onChange, errors }: SectionProps) {
           </div>
           {selectedFeatures.length > 0 && (
             <div className="sm:col-span-2">
-              <span className="text-neutral-500 dark:text-neutral-400">Features: </span>
-              <span className="font-medium text-neutral-900 dark:text-neutral-100">
+              <span className="text-stone-500 dark:text-stone-400">Features: </span>
+              <span className="font-medium text-stone-900 dark:text-stone-100">
                 {selectedFeatures.map((f) => f.label).join(", ")}
               </span>
             </div>
@@ -691,11 +687,11 @@ function Section5({ data, onChange, errors }: SectionProps) {
       {/* Mandatory Freelance Terms & Liability Protection */}
       <div className="space-y-4">
         <div className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
-            Freelance Working Terms & Liability Agreement <span className="text-neutral-900 dark:text-neutral-100 font-bold">*</span>
+          <p className="text-xs font-medium uppercase tracking-wider text-stone-600 dark:text-stone-400">
+            Freelance Working Terms & Liability Agreement <span className="text-orange-600 dark:text-orange-500 font-bold">*</span>
           </p>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">
-            Please acknowledge the standard project working agreements before sending your request.
+          <p className="text-xs text-stone-500 dark:text-stone-400">
+            Please acknowledge the standard project agreements before sending your intake.
           </p>
         </div>
 
@@ -705,10 +701,10 @@ function Section5({ data, onChange, errors }: SectionProps) {
           className={cn(
             "p-4 rounded-xl border flex items-start gap-3.5 cursor-pointer transition-all",
             data.agreedToRevisionTerms
-              ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800/40"
+              ? "border-orange-600 dark:border-orange-500 bg-orange-50/40 dark:bg-orange-950/20"
               : errors.agreedToRevisionTerms
               ? "border-red-400 dark:border-red-500 bg-red-50/20"
-              : "border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-neutral-300"
+              : "border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 hover:border-stone-300"
           )}
         >
           <input
@@ -722,14 +718,14 @@ function Section5({ data, onChange, errors }: SectionProps) {
             className={cn(
               "w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors",
               data.agreedToRevisionTerms
-                ? "border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900"
-                : "border-neutral-300 dark:border-neutral-700"
+                ? "border-orange-600 dark:border-orange-500 bg-orange-600 dark:bg-orange-500 text-white"
+                : "border-stone-300 dark:border-stone-700"
             )}
           >
             {data.agreedToRevisionTerms && <Check className="w-3 h-3 stroke-[3]" />}
           </div>
-          <div className="text-xs leading-relaxed text-neutral-700 dark:text-neutral-300">
-            <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+          <div className="text-xs leading-relaxed text-stone-700 dark:text-stone-300">
+            <span className="font-semibold text-stone-900 dark:text-stone-100">
               Design Revisions & Milestone Advance:
             </span>{" "}
             Client agrees that the proposal quote includes 2 comprehensive rounds of design revisions and requires a 50% advance milestone deposit prior to starting design and development work (with the remaining 50% balance payable upon final staging approval before live domain deployment).
@@ -747,10 +743,10 @@ function Section5({ data, onChange, errors }: SectionProps) {
           className={cn(
             "p-4 rounded-xl border flex items-start gap-3.5 cursor-pointer transition-all",
             data.agreedToLiabilityTerms
-              ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800/40"
+              ? "border-orange-600 dark:border-orange-500 bg-orange-50/40 dark:bg-orange-950/20"
               : errors.agreedToLiabilityTerms
               ? "border-red-400 dark:border-red-500 bg-red-50/20"
-              : "border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-neutral-300"
+              : "border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 hover:border-stone-300"
           )}
         >
           <input
@@ -764,14 +760,14 @@ function Section5({ data, onChange, errors }: SectionProps) {
             className={cn(
               "w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors",
               data.agreedToLiabilityTerms
-                ? "border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900"
-                : "border-neutral-300 dark:border-neutral-700"
+                ? "border-orange-600 dark:border-orange-500 bg-orange-600 dark:bg-orange-500 text-white"
+                : "border-stone-300 dark:border-stone-700"
             )}
           >
             {data.agreedToLiabilityTerms && <Check className="w-3 h-3 stroke-[3]" />}
           </div>
-          <div className="text-xs leading-relaxed text-neutral-700 dark:text-neutral-300">
-            <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+          <div className="text-xs leading-relaxed text-stone-700 dark:text-stone-300">
+            <span className="font-semibold text-stone-900 dark:text-stone-100">
               Third-Party Costs & Legal Liability Limitation:
             </span>{" "}
             Client agrees that ongoing third-party subscriptions and fees (domain renewal, web hosting accounts, paid plugins/APIs, payment processor merchant fees) are billed directly to the client, and the designer's maximum cumulative legal liability under any circumstance is strictly limited to the total professional service fee paid for this project.
@@ -816,34 +812,34 @@ function SuccessScreen({
 
   return (
     <div className="max-w-xl mx-auto py-16 px-4 animate-fade-slide">
-      <div className="p-8 sm:p-10 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-center space-y-6">
-        <div className="w-12 h-12 rounded-full border border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 mx-auto flex items-center justify-center">
+      <div className="p-8 sm:p-10 rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-center space-y-6">
+        <div className="w-12 h-12 rounded-full border border-orange-600 dark:border-orange-500 bg-orange-600 dark:bg-orange-500 text-white mx-auto flex items-center justify-center">
           <Check className="w-6 h-6 stroke-[2.5]" />
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+          <h2 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
             Intake Received
           </h2>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-md mx-auto leading-relaxed">
-            Thank you, <span className="font-medium text-neutral-900 dark:text-neutral-100">{data.fullName}</span>. We have received the project specifications for <span className="font-medium text-neutral-900 dark:text-neutral-100">{data.companyName}</span> and will prepare your tailored quote within 24–48 hours.
+          <p className="text-sm text-stone-500 dark:text-stone-400 max-w-md mx-auto leading-relaxed">
+            Thank you, <span className="font-medium text-stone-900 dark:text-stone-100">{data.fullName}</span>. We have received the project specifications for <span className="font-medium text-stone-900 dark:text-stone-100">{data.companyName}</span> and will prepare your tailored quote within 24–48 hours.
           </p>
         </div>
 
-        <div className="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/60 text-left text-xs space-y-2">
+        <div className="p-4 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/60 text-left text-xs space-y-2">
           <div className="flex justify-between">
-            <span className="text-neutral-500">Contact Email:</span>
-            <span className="font-medium text-neutral-900 dark:text-neutral-100">{data.email}</span>
+            <span className="text-stone-500">Contact Email:</span>
+            <span className="font-medium text-stone-900 dark:text-stone-100">{data.email}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-neutral-500">Scope Type:</span>
-            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+            <span className="text-stone-500">Scope Type:</span>
+            <span className="font-medium text-stone-900 dark:text-stone-100">
               {data.websiteCategory === "other" ? data.websiteCategoryCustom : selectedCategory?.label}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-neutral-500">Target Timeline:</span>
-            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+            <span className="text-stone-500">Target Timeline:</span>
+            <span className="font-medium text-stone-900 dark:text-stone-100">
               {data.launchTimeline === "custom" ? data.launchTimelineCustom : selectedTimeline?.label}
             </span>
           </div>
@@ -854,16 +850,16 @@ function SuccessScreen({
             href={`https://wa.me/?text=${getWhatsAppMessage()}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100 transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-stone-200 dark:border-stone-800 text-sm font-medium hover:bg-stone-50 dark:hover:bg-stone-800 text-stone-900 dark:text-stone-100 transition-colors"
           >
-            <MessageSquare className="w-4 h-4" />
+            <MessageSquare className="w-4 h-4 text-orange-600 dark:text-orange-500" />
             Send Summary via WhatsApp
           </a>
 
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium hover:opacity-90 transition-opacity"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-sm font-medium transition-colors shadow-sm"
           >
             <RotateCcw className="w-4 h-4" />
             Submit Another Request
@@ -883,7 +879,6 @@ export default function OnboardingForm() {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
   const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState<string>("");
   const [themeMode, setThemeMode] = useState<"system" | "light" | "dark">("system");
 
   const totalSteps = 5;
@@ -896,7 +891,6 @@ export default function OnboardingForm() {
     } else if (themeMode === "light") {
       root.classList.remove("dark");
     } else {
-      // Follow system
       const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       if (isDark) root.classList.add("dark");
       else root.classList.remove("dark");
@@ -990,7 +984,6 @@ export default function OnboardingForm() {
   };
 
   const jumpToStep = (step: number) => {
-    // Allow jumping to steps already visited or validated
     if (step < currentStep || validateStep(currentStep)) {
       setCurrentStep(step);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1077,7 +1070,6 @@ Submitted at: ${new Date().toISOString()}
       }
     } catch (err) {
       console.error("Submission error:", err);
-      // If network fails, provide mailto fallback automatically
       const mailtoSubject = encodeURIComponent(`New Website Onboarding - ${formData.companyName}`);
       const mailtoBody = encodeURIComponent(buildEmailSummary());
       window.open(`mailto:?subject=${mailtoSubject}&body=${mailtoBody}`, "_blank");
@@ -1105,20 +1097,20 @@ Submitted at: ${new Date().toISOString()}
   return (
     <div className="min-h-screen flex flex-col justify-between">
       {/* Minimal Top Header */}
-      <header className="border-b border-neutral-200/80 dark:border-neutral-800/80 bg-white/70 dark:bg-neutral-950/70 backdrop-blur-md sticky top-0 z-30">
+      <header className="border-b border-stone-200/80 dark:border-stone-800/80 bg-white/80 dark:bg-stone-950/80 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg border border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 flex items-center justify-center font-bold text-xs">
+            <div className="w-7 h-7 rounded-lg bg-orange-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
               O
             </div>
-            <span className="text-sm font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
+            <span className="text-sm font-semibold tracking-tight text-stone-900 dark:text-stone-100">
               Client Onboarding
             </span>
           </div>
 
           <div className="flex items-center gap-3">
             {/* Step indicator */}
-            <span className="text-xs font-mono text-neutral-500 dark:text-neutral-400">
+            <span className="text-xs font-mono text-stone-500 dark:text-stone-400">
               {currentStep} / {totalSteps}
             </span>
 
@@ -1131,7 +1123,7 @@ Submitted at: ${new Date().toISOString()}
                 else setThemeMode("system");
               }}
               title={`Theme: ${themeMode} (click to toggle)`}
-              className="w-8 h-8 rounded-lg border border-neutral-200 dark:border-neutral-800 flex items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+              className="w-8 h-8 rounded-lg border border-stone-200 dark:border-stone-800 flex items-center justify-center text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
             >
               {themeMode === "light" && <Sun className="w-3.5 h-3.5" />}
               {themeMode === "dark" && <Moon className="w-3.5 h-3.5" />}
@@ -1142,19 +1134,44 @@ Submitted at: ${new Date().toISOString()}
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-3xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex-1">
-        {/* Intro */}
-        <div className="mb-8 space-y-1.5">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
-            Website Project Onboarding
-          </h1>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
-            Please complete this intake form so we can evaluate your project scope and provide an accurate proposal tailored to your business needs.
-          </p>
+      <main className="max-w-3xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex-1">
+        {/* Warm Terracotta / Burnt Orange Hero Banner Section */}
+        <div className="mb-8 rounded-2xl bg-[#ea580c] dark:bg-[#c2410c] text-white p-6 sm:p-8 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div className="space-y-2 max-w-xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/15 text-orange-50 text-[11px] font-medium tracking-wide">
+                <span>Direct Studio Intake</span>
+                <span>•</span>
+                <span>Custom Proposal</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight">
+                Website Onboarding & Project Scope
+              </h1>
+              <p className="text-xs sm:text-sm text-orange-100/90 leading-relaxed">
+                Tell us about your brand, technical needs, and timeline expectations. We evaluate each submission thoroughly to deliver an honest, transparent project proposal within 24–48 hours.
+              </p>
+            </div>
+
+            {/* Studio attributes */}
+            <div className="flex sm:flex-col gap-2 pt-3 sm:pt-0 border-t sm:border-t-0 sm:border-l border-white/20 sm:pl-6 text-xs text-orange-100/90 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                <span>24–48h proposal turnaround</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                <span>Confidential review</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                <span>Transparent fixed pricing</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Minimal Clickable Stepper */}
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="grid grid-cols-5 gap-2">
             {SECTION_META.map((meta) => {
               const isActive = meta.id === currentStep;
@@ -1165,16 +1182,16 @@ Submitted at: ${new Date().toISOString()}
                   key={meta.id}
                   type="button"
                   onClick={() => jumpToStep(meta.id)}
-                  className="flex flex-col gap-1 text-left group transition-all"
+                  className="flex flex-col gap-1.5 text-left group transition-all"
                 >
                   <div
                     className={cn(
-                      "h-1 rounded-full transition-all duration-200",
+                      "h-1.5 rounded-full transition-all duration-200",
                       isActive
-                        ? "bg-neutral-900 dark:bg-white"
+                        ? "bg-orange-600 dark:bg-orange-500"
                         : isPassed
-                        ? "bg-neutral-400 dark:bg-neutral-600"
-                        : "bg-neutral-200 dark:bg-neutral-800"
+                        ? "bg-stone-400 dark:bg-stone-600"
+                        : "bg-stone-200 dark:bg-stone-800"
                     )}
                   />
                   <div className="hidden sm:flex items-center justify-between pt-0.5">
@@ -1182,10 +1199,10 @@ Submitted at: ${new Date().toISOString()}
                       className={cn(
                         "text-[11px] font-medium transition-colors",
                         isActive
-                          ? "text-neutral-900 dark:text-neutral-100 font-semibold"
+                          ? "text-orange-600 dark:text-orange-400 font-semibold"
                           : isPassed
-                          ? "text-neutral-600 dark:text-neutral-400"
-                          : "text-neutral-400 dark:text-neutral-600"
+                          ? "text-stone-700 dark:text-stone-300"
+                          : "text-stone-400 dark:text-stone-600"
                       )}
                     >
                       {meta.stepLabel}
@@ -1198,18 +1215,18 @@ Submitted at: ${new Date().toISOString()}
         </div>
 
         {/* Form Card */}
-        <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 sm:p-8 shadow-sm">
+        <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-6 sm:p-8 shadow-sm">
           {/* Card Header */}
-          <div className="border-b border-neutral-100 dark:border-neutral-800 pb-5 mb-6">
+          <div className="border-b border-stone-100 dark:border-stone-800 pb-5 mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-orange-600 dark:text-orange-400 font-semibold">
                   Step 0{currentStep} / 0{totalSteps}
                 </span>
-                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mt-0.5">
+                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100 mt-0.5">
                   {currentMeta.title}
                 </h2>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
                   {currentMeta.subtitle}
                 </p>
               </div>
@@ -1219,7 +1236,7 @@ Submitted at: ${new Date().toISOString()}
                 <button
                   type="button"
                   onClick={handleBack}
-                  className="text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 flex items-center gap-1 transition-colors"
+                  className="text-xs font-medium text-stone-500 hover:text-stone-900 dark:hover:text-stone-100 flex items-center gap-1 transition-colors"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                   <span>Back</span>
@@ -1229,7 +1246,7 @@ Submitted at: ${new Date().toISOString()}
           </div>
 
           {/* Step Body */}
-          <div className="animate-fade-slide min-h-[320px]">
+          <div className="animate-fade-slide min-h-[300px]">
             {currentStep === 1 && (
               <Section1 data={formData} onChange={handleChange} errors={errors} />
             )}
@@ -1248,26 +1265,26 @@ Submitted at: ${new Date().toISOString()}
           </div>
 
           {/* Action Bar / Navigation Buttons */}
-          <div className="border-t border-neutral-100 dark:border-neutral-800 pt-6 mt-8 flex items-center justify-between gap-3">
+          <div className="border-t border-stone-100 dark:border-stone-800 pt-6 mt-8 flex items-center justify-between gap-3">
             {/* Dedicated Back Button */}
             {currentStep > 1 ? (
               <button
                 type="button"
                 onClick={handleBack}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 text-sm font-medium transition-colors"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 text-sm font-medium transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span>Back</span>
               </button>
             ) : (
-              <div /> // Spacer
+              <div />
             )}
 
             {currentStep < totalSteps ? (
               <button
                 type="button"
                 onClick={handleNext}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-semibold hover:opacity-90 transition-opacity ml-auto"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-sm font-semibold transition-colors shadow-sm ml-auto"
               >
                 <span>Continue</span>
                 <ChevronRight className="w-4 h-4" />
@@ -1278,10 +1295,10 @@ Submitted at: ${new Date().toISOString()}
                 onClick={handleSubmit}
                 disabled={submitStatus === "loading"}
                 className={cn(
-                  "inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-opacity ml-auto",
+                  "inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ml-auto shadow-sm",
                   submitStatus === "loading"
-                    ? "bg-neutral-400 dark:bg-neutral-600 text-white cursor-not-allowed"
-                    : "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:opacity-90"
+                    ? "bg-stone-400 dark:bg-stone-600 text-white cursor-not-allowed"
+                    : "bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white"
                 )}
               >
                 {submitStatus === "loading" ? (
@@ -1302,7 +1319,7 @@ Submitted at: ${new Date().toISOString()}
       </main>
 
       {/* Minimal Footer */}
-      <footer className="border-t border-neutral-200/80 dark:border-neutral-800/80 py-6 text-center text-xs text-neutral-400 dark:text-neutral-500 space-y-1">
+      <footer className="border-t border-stone-200/80 dark:border-stone-800/80 py-6 text-center text-xs text-stone-400 dark:text-stone-500 space-y-1">
         <p>All client submissions are confidential and encrypted in transit.</p>
         <p>© {new Date().getFullYear()} Professional Web Design & Development Services.</p>
       </footer>
